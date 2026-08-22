@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="dashboard">
+
+    <h1>Welcome, {{ user.name|default:user.username }} 👋</h1>
+
+    <p>You are successfully logged in.</p>
+
+    <div class="user-info">
+        <p><strong>Username:</strong> {{ user.username }}</p>
+        <p><strong>Email:</strong> {{ user.email }}</p>
+    </div>
+
+    <div class="actions">
+        <a href="{% url 'logout' %}" class="btn logout-btn">Logout</a>
+    </div>
+
+</div>
+{% endblock %}

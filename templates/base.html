@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Django Auth System</title>
+    <link rel="stylesheet" href="/static/css/auth.css">
+</head>
+
+<body>
+
+    <div class="container">
+        {% for message in messages %}
+        <div class="alert">{{ message }}</div>
+        {% endfor %}
+
+        {% block content %}{% endblock %}
+
+    </div>
+
+</body>
+
+</html>
