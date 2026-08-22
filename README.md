@@ -1,87 +1,359 @@
-# 🌍 GlobeTrotter - AI Multi-City Travel Planner
+# 🌍 GlobeTrotter
 
-GlobeTrotter is a full-stack Django travel planning web application built with a **`config`**, **`accounts`**, and **`app`** folder structure. It dynamically queries real AI models (Pollinations AI, OpenRouter, HuggingFace) on-the-fly for **ANY personalized destination** (e.g., *Dwarka, Somnath, Varanasi, Manali, Kedarnath, Goa, Paris, Tokyo...*), formats all budgets & costs in **Indian Rupees (₹)**, and generates non-changeable **username first-letter avatars**.
+### Empowering Personalized Travel Planning
 
----
+GlobeTrotter is a full-stack travel planning platform developed for the Odoo Hackathon. It helps users create personalized multi-city trips, organize destinations and activities, manage itineraries, estimate budgets, visualize travel plans, and share trips.
 
-## 🚀 Key Features
+## 🚀 Project Overview
 
-1. **Folder Hierarchy Restored**:
-   - `config/`: Root settings, WSGI, URLs.
-   - `accounts/`: User authentication, registration, login, logout, and profile with dynamic initial-letter avatars.
-   - `app/`: Multi-city step-by-step trip planner, dynamic AI place & activity discovery, day-wise relational itinerary builder, budget breakdown in ₹ Rupees, calendar schedule view, JSON export, and community trip cloning.
+Planning a multi-city trip often requires managing destinations, dates, activities, expenses, and itineraries across multiple platforms. GlobeTrotter brings these tasks together into one connected travel-planning experience.
 
-2. **Personalized Dynamic Destinations (No Static Hardcoding)**:
-   - Enter ANY destination or combination of stops (e.g., *Dwarka &rarr; Somnath*).
-   - Real-time AI queries fetch authentic local temples, attractions, sightseeing spots, and food options for each specific city.
+### Main Goals
 
-3. **All Pricing in Indian Rupees (₹)**:
-   - Itinerary activity costs, daily budgets, category breakdowns, and AI budget estimates are all calculated and displayed in **₹ INR**.
+- Create customized multi-city itineraries
+- Manage travel dates and destinations
+- Discover activities and places
+- Organize day-wise itineraries
+- Estimate and track trip expenses
+- View trips through timeline/calendar views
+- Share travel plans with others
+- Provide a clean and responsive travel-focused interface
 
-4. **Dynamic Initial-Letter Avatars**:
-   - Avatars are automatically derived from the first letter of the user's username (e.g., **`T`** for `technicalcoderji`, **`A`** for `alex`), with no changeable profile picture upload.
+## ✨ Key Features
 
----
+### 🔐 Authentication
+- User registration
+- User login
+- Logout
+- User-specific travel data
 
-## 📦 Folder Structure
+### 🧳 Trip Management
+- Create trips
+- Add travel dates
+- Manage multiple destinations/stops
+- View existing trips
+- Edit and delete trips
 
+### 📍 Destination Discovery
+- Search destinations
+- Explore cities
+- Add destinations to trips
+- View destination information
+
+### 🎯 Activity Planning
+- Discover activities
+- Add activities to a trip
+- Organize activities around destinations and dates
+
+### 🗓️ Itinerary Builder
+- Build multi-city itineraries
+- Organize travel stops
+- View day-wise plans
+- Manage activities within the itinerary
+
+### 💰 Budget & Cost Planning
+- Estimate total trip cost
+- Track activity and other expenses
+- View budget breakdown
+- Calculate approximate daily spending
+
+### 📅 Calendar / Timeline
+- Visualize trip dates
+- View itinerary by day
+- Understand the complete journey flow
+
+### 🤝 Community & Sharing
+- Explore public/shared trips
+- Share travel plans
+- View shared itineraries
+- Copy trips where supported
+
+## 🎨 UI / Design
+
+The interface follows a modern travel-dashboard design inspired by the GlobeTrotter concept.
+
+- Light travel-themed background
+- White rounded content cards
+- Blue/teal accents
+- Large travel imagery
+- Dashboard layout
+- Sidebar navigation
+- Trip and itinerary cards
+- Budget and activity panels
+- Responsive layout
+
+## 🛠️ Technology Stack
+
+### Frontend
+- HTML5
+- CSS3
+- JavaScript
+- Fetch API
+
+### Backend
+- Python
+- Django
+- Django REST Framework where applicable
+
+### Database
+- Relational database
+- SQLite for local development where configured
+
+## 🏗️ Architecture
+
+```text
+Frontend (HTML/CSS/JavaScript)
+              │
+              │ Fetch / API
+              ▼
+       Django Backend
+              │
+              ▼
+      Relational Database
 ```
+
+## 👥 Team
+
+| Member | Role | Responsibility |
+|---|---|---|
+| **Dip** | Team Leader + Backend Developer | Django backend, database, APIs and backend logic |
+| **Hardik** | Frontend Developer | HTML, CSS, JavaScript and user interface |
+| **Aman** | Integration Developer | Frontend-backend integration, API communication, data flow and testing |
+
+## 🔄 Integration Flow
+
+```text
+User Action
+    ↓
+Frontend
+    ↓
+Fetch API
+    ↓
+Django API
+    ↓
+Backend Processing
+    ↓
+Database
+    ↓
+JSON Response
+    ↓
+Frontend UI Update
+```
+
+For example, when a user creates a trip:
+
+```text
+Create Trip Form
+      ↓
+JavaScript Request
+      ↓
+Django API
+      ↓
+Database
+      ↓
+Success Response
+      ↓
+Trip Appears in Dashboard
+```
+
+## 📁 Suggested Project Structure
+
+```text
 GlobeTrotter/
-├── config/                  # Django project configuration
-│   ├── settings.py          # INSTALLED_APPS: accounts, app
-│   ├── urls.py              # Root URL router
-│   ├── wsgi.py
-│   └── asgi.py
-├── accounts/                # User Auth & Profile App
-│   ├── models.py            # CustomUser (avatar_letter property)
-│   ├── forms.py             # RegisterForm, LoginForm, ProfileForm
-│   ├── views.py             # register_view, login_view, logout_view, profile_view
-│   ├── urls.py              # /auth/login/, /auth/register/, /auth/profile/, etc.
-│   └── tests.py
-├── app/                     # Core Travel & Itinerary App
-│   ├── models.py            # Trip, TripStop, Itinerary, ItineraryItem, City
-│   ├── views.py             # home_view, start_trip, step2_events, step3_final_plan, builder, budget, calendar, export, copy
-│   ├── ai_helper.py         # Dynamic AI client (search_cities_ai, fetch_activities_for_city_ai, etc.)
-│   ├── urls.py              # /start/, /events/, /plan/, /trips/..., /ai/...
-│   ├── management/commands/
-│   │   └── seed_data.py     # Seeds demo user & personalized Dwarka-Somnath trip in ₹
-│   └── tests.py
-├── templates/               # Minimal, responsive templates
-│   ├── base.html            # Navigation with username initial avatar badge
-│   ├── home.html            # Dashboard & resume draft
-│   ├── create_step1.html    # Step 1: Multi-city destination picker & dates
-│   ├── create_step2.html    # Step 2: Live AI activity selection
-│   ├── auth/                # login.html, register.html, profile.html
-│   ├── trips/               # itinerary_builder.html, budget.html, calendar.html, trip_list.html, etc.
-│   └── ai_services/         # ai_tools.html (Interactive AI Travel Lab)
-└── static/css/style.css     # Clean modern CSS
+├── frontend/
+│   ├── index.html
+│   ├── login.html
+│   ├── signup.html
+│   ├── dashboard.html
+│   ├── create-trip.html
+│   ├── my-trips.html
+│   ├── itinerary.html
+│   ├── city-search.html
+│   ├── activity-search.html
+│   ├── budget.html
+│   ├── calendar.html
+│   ├── shared-trip.html
+│   ├── profile.html
+│   ├── css/
+│   ├── js/
+│   └── assets/
+├── backend/
+│   ├── manage.py
+│   ├── requirements.txt
+│   ├── config/
+│   ├── accounts/
+│   ├── trips/
+│   ├── destinations/
+│   ├── activities/
+│   └── budgets/
+├── README.md
+└── .gitignore
 ```
 
----
+> Adjust the structure above to match the actual files in the final repository.
 
-## ⚡ Quick Start
+## 💻 Running the Backend on Windows
+
+Open Command Prompt or PowerShell in the backend directory.
+
+### 1. Create virtual environment
 
 ```bash
-# 1. Apply database migrations
+python -m venv venv
+```
+
+### 2. Activate it
+
+```bash
+venv\Scripts\activate
+```
+
+### 3. Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Apply migrations
+
+```bash
 python manage.py migrate
+```
 
-# 2. Seed initial demo data
-python manage.py seed_data
+### 5. Create an admin user if required
 
-# 3. Start development server
+```bash
+python manage.py createsuperuser
+```
+
+### 6. Start Django
+
+```bash
 python manage.py runserver
 ```
 
-Open [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
+The Django development server will normally be available at `http://127.0.0.1:8000/`.
 
-### 🔑 Demo Account
-- **Username:** `technicalcoderji`
-- **Password:** `Coderji123!`
+## 🌐 Running the Frontend
+
+Run the frontend using the method configured for the project. If the frontend uses local HTML files, open the appropriate entry page. For development, VS Code Live Server can be used if configured.
+
+Make sure the frontend API base URL matches the running Django backend.
+
+## 🔌 API Integration
+
+Typical operations include:
+
+```text
+POST   /api/auth/register/
+POST   /api/auth/login/
+GET    /api/trips/
+POST   /api/trips/
+GET    /api/trips/<id>/
+PUT    /api/trips/<id>/
+DELETE /api/trips/<id>/
+GET    /api/cities/
+GET    /api/activities/
+POST   /api/trips/<id>/stops/
+POST   /api/trips/<id>/activities/
+GET    /api/trips/<id>/budget/
+GET    /api/trips/<id>/calendar/
+POST   /api/trips/<id>/share/
+```
+
+> Endpoint names may differ in the final implementation. Refer to the Django URL configuration for the exact routes.
+
+## 🧪 Testing Checklist
+
+- [ ] Registration works
+- [ ] Login works
+- [ ] Logout works
+- [ ] Dashboard loads
+- [ ] Trips can be created
+- [ ] Trips can be viewed
+- [ ] Trips can be edited
+- [ ] Trips can be deleted
+- [ ] Destinations can be searched
+- [ ] Activities can be added
+- [ ] Itinerary data is saved
+- [ ] Budget calculations work
+- [ ] Calendar/timeline works
+- [ ] Sharing works where implemented
+- [ ] Frontend communicates with backend
+- [ ] Database stores and retrieves data
+- [ ] No major browser console errors
+- [ ] No broken buttons or pages
+
+## 🌱 Future Scope
+
+- Live maps and route planning
+- Flight and hotel integrations
+- Real-time travel pricing
+- Advanced AI itinerary generation
+- Weather-based planning
+- Personalized recommendations
+- Collaborative trip editing
+- Mobile application
+- Notifications and reminders
+- Advanced analytics
+
+## 🏆 Hackathon Focus
+
+The core travel-planning journey is:
+
+```text
+Discover
+   ↓
+Create Trip
+   ↓
+Add Destinations
+   ↓
+Add Activities
+   ↓
+Build Itinerary
+   ↓
+Manage Budget
+   ↓
+View Timeline
+   ↓
+Share Trip
+```
+
+## 📜 Problem Statement Alignment
+
+GlobeTrotter is designed around the Odoo hackathon requirement for personalized multi-city travel planning with destinations, activities, budgets, itinerary visualization, sharing, a responsive interface, and relational travel data management.
+
+## 👨‍💻 Team Contribution
+
+### Dip — Team Leader / Backend
+- Django backend
+- Database design
+- API development
+- Authentication
+- Backend business logic
+
+### Hardik — Frontend
+- UI/UX implementation
+- HTML
+- CSS
+- JavaScript
+- Responsive design
+- User interaction
+
+### Aman — Integration
+- Frontend and backend connection
+- API integration
+- Data flow
+- Authentication integration
+- Error handling
+- End-to-end testing
+
+## 📌 Important Note
+
+This README describes the intended GlobeTrotter architecture and functionality. Features should only be presented as completed when they are actually implemented and tested in the final build.
 
 ---
 
-## 🧪 Run Automated Tests
-```bash
-python manage.py test
-```
-All 13 unit tests pass across authentication, initial-letter avatars, multi-city planning flow, dynamic activity insertion, budget calculations in ₹ INR, calendar schedule views, JSON export, and AI REST endpoints.
+# 🌍 GlobeTrotter
+
+### Plan Smarter. Travel Better.
