@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Profile - GlobeTrotter</title>
+
+  <!-- Google Fonts & Font Awesome Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --bg-color: #f0f7fc;
+      --card-bg: #ffffff;
+      --primary-blue: #0284c7;
+      --primary-hover: #0369a1;
+      --accent-green: #10b981;
+      --accent-green-hover: #059669;
+      --accent-amber: #f59e0b;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* 1. Universal Sticky Navbar */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      background: var(--card-bg);
+      padding: 12px 24px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #0f172a;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .brand-logo i {
+      color: var(--primary-blue);
+      font-size: 1.4rem;
+    }
+
+    .search-bar {
+      display: flex;
+      align-items: center;
+      background: #f1f5f9;
+      border-radius: 30px;
+      padding: 8px 16px;
+      width: 100%;
+      max-width: 400px;
+      gap: 10px;
+    }
+
+    .search-bar input {
+      border: none;
+      background: transparent;
+      outline: none;
+      width: 100%;
+      font-size: 0.88rem;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      list-style: none;
+      gap: 24px;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-muted);
+      font-weight: 500;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+
+    .nav-links a.active, .nav-links a:hover {
+      color: var(--primary-blue);
+      font-weight: 600;
+    }
+
+    .account {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .profile-nav-avatar {
+      height: 30px;
+      width: 30px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1px solid var(--border-color);
+    }
+
+    /* Main Container */
+    .app-main {
+      flex: 1;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      overflow: hidden;
+    }
+
+    /* Profile Header Card */
+    .profile-cover {
+      position: relative;
+      height: 180px;
+      background: linear-gradient(135deg, #0284c7, #0d9488);
+    }
+
+    .profile-cover img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.45;
+    }
+
+    .profile-info-wrapper {
+      padding: 0 32px 24px;
+      position: relative;
+    }
+
+    .profile-avatar-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-top: -60px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .profile-avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 4px solid var(--card-bg);
+      object-fit: cover;
+      background: #e2e8f0;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .social-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      border: none;
+      padding: 8px 16px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: var(--primary-blue);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-outline {
+      background: #f8fafc;
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+    }
+
+    .btn-outline:hover {
+      background: #edf2f7;
+    }
+
+    .btn-green {
+      background: var(--accent-green);
+      color: #fff;
+    }
+
+    .btn-green:hover {
+      background: var(--accent-green-hover);
+    }
+
+    .profile-details h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .profile-handle {
+      font-size: 0.9rem;
+      color: var(--primary-blue);
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .profile-bio {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      max-width: 700px;
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+
+    .profile-meta-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+
+    .profile-meta-list span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .social-stats-bar {
+      display: flex;
+      gap: 32px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .stat-box {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      text-decoration: none;
+      color: var(--text-main);
+    }
+
+    .stat-box strong {
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .stat-box span {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    /* 3. Filter Tabs */
+    .filter-tabs {
+      display: flex;
+      gap: 8px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 12px;
+    }
+
+    .tab-btn {
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: #e0f2fe;
+      color: var(--primary-blue);
+      border-color: #bae6fd;
+    }
+
+    /* 4. Trip Grid & Cards */
+    .trips-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .trip-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .trip-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+    }
+
+    .trip-card-header {
+      position: relative;
+      height: 140px;
+    }
+
+    .trip-card-header img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .trip-status-badge {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      backdrop-filter: blur(4px);
+    }
+
+    .badge-current {
+      background: rgba(16, 185, 129, 0.9);
+      color: white;
+    }
+
+    .badge-upcoming {
+      background: rgba(2, 132, 199, 0.9);
+      color: white;
+    }
+
+    .badge-previous {
+      background: rgba(100, 116, 139, 0.9);
+      color: white;
+    }
+
+    .trip-card-body {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      flex: 1;
+    }
+
+    .route-display {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .route-display i {
+      color: var(--primary-blue);
+      font-size: 0.8rem;
+    }
+
+    .trip-metrics {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .metric-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .trip-card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      border-top: 1px solid var(--border-color);
+      background: #f8fafc;
+    }
+
+    @media (max-width: 992px) {
+      .trips-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .trips-grid {
+        grid-template-columns: 1fr;
+      }
+      .profile-avatar-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+      .profile-info-wrapper {
+        padding: 0 16px 16px;
+      }
+      .social-stats-bar {
+        gap: 16px;
+      }
+      .nav-links {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sticky Navbar -->
+  <header class="navbar">
+    <a href="dashboard.html" class="brand-logo">
+      <i class="fa-solid fa-earth-americas"></i> GLOBETROTTER
+    </a>
+
+    <div class="search-bar">
+      <i class="fa-solid fa-magnifying-glass" style="color: var(--text-muted);"></i>
+      <input type="text" placeholder="Search destinations, friends, trips..." />
+    </div>
+
+    <ul class="nav-links">
+      <li><a href="dashboard.html">Explore</a></li>
+      <li><a href="#">Community</a></li>
+      <li><a href="dashboard.html">My Trips</a></li>
+      <li>
+        <div class="account">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" alt="Avatar" class="profile-nav-avatar" />
+          <a href="profile.html" class="active">Sarah <i class="fa-solid fa-chevron-down" style="font-size: 0.7rem;"></i></a>
+        </div>
+      </li>
+    </ul>
+  </header>
+
+  <!-- Main Profile View -->
+  <main class="app-main">
+
+    <!-- Profile Info Card -->
+    <section class="card">
+      <div class="profile-cover">
+        <img src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=1400&q=80" alt="Cover" />
+      </div>
+
+      <div class="profile-info-wrapper">
+        <div class="profile-avatar-row">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80" alt="Sarah Jenkins" class="profile-avatar" />
+          <div class="social-actions">
+            <button class="btn btn-outline"><i class="fa-solid fa-gear"></i> Edit Profile</button>
+            <button class="btn btn-primary"><i class="fa-solid fa-share-nodes"></i> Share Profile</button>
+          </div>
+        </div>
+
+        <div class="profile-details">
+          <h1>Sarah Jenkins</h1>
+          <div class="profile-handle">@sarah_wanders</div>
+          <p class="profile-bio">
+            Full-time designer, part-time nomad. Exploring ancient cities, cozy cafés, and hiking trails across the Mediterranean. Always chasing golden hour. ✈️ 📸
+          </p>
+
+          <div class="profile-meta-list">
+            <span><i class="fa-solid fa-location-dot"></i> San Francisco, CA</span>
+            <span><i class="fa-solid fa-envelope"></i> sarah.j@example.com</span>
+            <span><i class="fa-solid fa-link"></i> sarahwanders.blog</span>
+            <span><i class="fa-solid fa-calendar-days"></i> Joined March 2024</span>
+          </div>
+
+          <div class="social-stats-bar">
+            <div class="stat-box">
+              <strong>6</strong> <span>Trips</span>
+            </div>
+            <div class="stat-box">
+              <strong>14</strong> <span>Countries</span>
+            </div>
+            <div class="stat-box">
+              <strong>1.2k</strong> <span>Followers</span>
+            </div>
+            <div class="stat-box">
+              <strong>418</strong> <span>Following</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Itineraries / Trips Grid Section -->
+    <div>
+      <div class="filter-tabs">
+        <button class="tab-btn active"><i class="fa-solid fa-layer-group"></i> All Trips</button>
+        <button class="tab-btn"><i class="fa-solid fa-spinner"></i> Current</button>
+        <button class="tab-btn"><i class="fa-solid fa-clock"></i> Upcoming</button>
+        <button class="tab-btn"><i class="fa-solid fa-check"></i> Previous</button>
+      </div>
+
+      <div class="trips-grid" style="margin-top: 18px;">
+
+        <!-- Current Trip -->
+        <article class="trip-card">
+          <div class="trip-card-header">
+            <img src="https://images.unsplash.com/photo-1511739001486-6bfe10ce785f?auto=format&fit=crop&w=600&q=80" alt="Europe Tour" />
+            <span class="trip-status-badge badge-current">Current</span>
+          </div>
+          <div class="trip-card-body">
+            <div class="route-display">
+              <span>Paris</span>
+              <i class="fa-solid fa-arrow-right"></i>
+              <span>Rome</span>
+              <i class="fa-solid fa-arrow-right"></i>
+              <span>Athens</span>
+            </div>
+            <div class="trip-metrics">
+              <div class="metric-row">
+                <i class="fa-solid fa-calendar-day"></i>
+                <span>Jun 15 – Jun 28, 2026</span>
+              </div>
+              <div class="metric-row">
+                <i class="fa-solid fa-hourglass-half"></i>
+                <span>14 Days Total (Day 6)</span>
+              </div>
+            </div>
+          </div>
+          <div class="trip-card-footer">
+            <button class="btn btn-outline" style="padding: 5px 10px; font-size: 0.78rem;">
+              <i class="fa-solid fa-share-nodes"></i> Share
+            </button>
+            <button class="btn btn-primary" style="padding: 5px 12px; font-size: 0.78rem;">
+              View Details
+            </button>
+          </div>
+        </article>
+
+        <!-- Upcoming Trip -->
+        <article class="trip-card">
+          <div class="trip-card-header">
+            <img src="https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=600&q=80" alt="Tokyo Trip" />
+            <span class="trip-status-badge badge-upcoming">Upcoming</span>
+          </div>
+          <div class="trip-card-body">
+            <div class="route-display">
+              <span>San Francisco</span>
+              <i class="fa-solid fa-arrow-right"></i>
+              <span>Tokyo</span>
+              <i class="fa-solid fa-arrow-right"></i>
+              <span>Kyoto</span>
+            </div>
+            <div class="trip-metrics">
+              <div class="metric-row">
+                <i class="fa-solid fa-calendar-day"></i>
+                <span>Oct 10 – Oct 22, 2026</span>
+              </div>
+              <div class="metric-row">
+                <i class="fa-solid fa-hourglass-half"></i>
+                <span>12 Days</span>
+              </div>
+            </div>
+          </div>
+          <div class="trip-card-footer">
+            <button class="btn btn-outline" style="padding: 5px 10px; font-size: 0.78rem;">
+              <i class="fa-solid fa-share-nodes"></i> Share
+            </button>
+            <button class="btn btn-primary" style="padding: 5px 12px; font-size: 0.78rem;">
+              View Details
+            </button>
+          </div>
+        </article>
+
+        <!-- Previous Trip -->
+        <article class="trip-card">
+          <div class="trip-card-header">
+            <img src="https://images.unsplash.com/photo-1533105079780-92b9be482077?auto=format&fit=crop&w=600&q=80" alt="Santorini Retreat" />
+            <span class="trip-status-badge badge-previous">Previous</span>
+          </div>
+          <div class="trip-card-body">
+            <div class="route-display">
+              <span>Athens</span>
+              <i class="fa-solid fa-arrow-right"></i>
+              <span>Santorini</span>
+            </div>
+            <div class="trip-metrics">
+              <div class="metric-row">
+                <i class="fa-solid fa-calendar-day"></i>
+                <span>May 02 – May 09, 2025</span>
+              </div>
+              <div class="metric-row">
+                <i class="fa-solid fa-hourglass-half"></i>
+                <span>7 Days</span>
+              </div>
+            </div>
+          </div>
+          <div class="trip-card-footer">
+            <button class="btn btn-outline" style="padding: 5px 10px; font-size: 0.78rem;">
+              <i class="fa-solid fa-share-nodes"></i> Share
+            </button>
+            <button class="btn btn-primary" style="padding: 5px 12px; font-size: 0.78rem;">
+              View Details
+            </button>
+          </div>
+        </article>
+
+      </div>
+    </div>
+
+  </main>
+
+</body>
+</html>

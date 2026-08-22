@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Plan a New Trip - GlobeTrotter</title>
+
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --bg-color: #f0f7fc;
+      --card-bg: #ffffff;
+      --primary-blue: #0284c7;
+      --primary-hover: #0369a1;
+      --accent-green: #10b981;
+      --accent-green-hover: #059669;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* 1. Header */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      background: var(--card-bg);
+      padding: 12px 24px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #0f172a;
+      text-decoration: none;
+    }
+
+    .brand-logo i {
+      color: var(--primary-blue);
+      font-size: 1.4rem;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      list-style: none;
+      gap: 24px;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-muted);
+      font-weight: 500;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+
+    .nav-links a.active, .nav-links a:hover {
+      color: var(--primary-blue);
+      font-weight: 600;
+    }
+
+    .account {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .profile-circle {
+      height: 30px;
+      width: 30px;
+      border-radius: 50%;
+      background: #cbd5e1;
+      flex-shrink: 0;
+    }
+
+    /* Main Container */
+    .app-main {
+      flex: 1;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* Common Card Styling */
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      padding: 24px;
+    }
+
+    .section-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .section-title i {
+      color: var(--primary-blue);
+    }
+
+    /* Trip Creation Form */
+    .trip-form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .input-with-icon {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-with-icon i {
+      position: absolute;
+      left: 14px;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .input-with-icon input,
+    .input-with-icon select {
+      width: 100%;
+      padding: 10px 14px 10px 38px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      background: #f8fafc;
+      outline: none;
+      font-size: 0.88rem;
+      color: var(--text-main);
+      transition: all 0.2s ease;
+    }
+
+    .input-with-icon input:focus,
+    .input-with-icon select:focus {
+      border-color: var(--primary-blue);
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+    }
+
+    .form-action {
+      grid-column: span 2;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .btn {
+      border: none;
+      padding: 10px 18px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.2s ease;
+    }
+
+    .btn-primary {
+      background: var(--primary-blue);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-outline {
+      background: #f8fafc;
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+    }
+
+    .btn-outline:hover {
+      background: #edf2f7;
+    }
+
+    /* Suggestions Grid (3 Columns x 2 Rows) */
+    .suggestions-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .suggestion-card {
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .suggestion-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+    }
+
+    .suggestion-img-container {
+      position: relative;
+      height: 140px;
+      overflow: hidden;
+    }
+
+    .suggestion-img-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .badge-category {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 3px 8px;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--primary-blue);
+    }
+
+    .suggestion-body {
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+    }
+
+    .suggestion-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .suggestion-location {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .suggestion-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .price-tag {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .btn-add {
+      background: #e0f2fe;
+      color: var(--primary-blue);
+      border: none;
+      padding: 5px 10px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-add:hover {
+      background: var(--primary-blue);
+      color: #fff;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .suggestions-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .trip-form-grid {
+        grid-template-columns: 1fr;
+      }
+      .form-action {
+        grid-column: span 1;
+      }
+      .suggestions-grid {
+        grid-template-columns: 1fr;
+      }
+      .nav-links {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sticky Navbar -->
+  <header class="navbar">
+    <a href="dashboard.html" class="brand-logo">
+      <i class="fa-solid fa-earth-americas"></i> GLOBETROTTER
+    </a>
+
+    <ul class="nav-links">
+      <li><a href="#">Explore</a></li>
+      <li><a href="#">Community</a></li>
+      <li><a href="dashboard.html">My Trips</a></li>
+      <li>
+        <div class="account">
+          <div class="profile-circle"></div>
+          <a href="#">User <i class="fa-solid fa-chevron-down" style="font-size: 0.7rem;"></i></a>
+        </div>
+      </li>
+    </ul>
+  </header>
+
+  <!-- Main Content -->
+  <main class="app-main">
+
+    <!-- Plan a New Trip Form Section -->
+    <section class="card">
+      <h2 class="section-title">
+        <i class="fa-solid fa-map-location-dot"></i> Plan a New Trip
+      </h2>
+
+      <form action="#" method="POST" class="trip-form-grid">
+        <div class="form-group">
+          <label for="trip-name">Trip Title</label>
+          <div class="input-with-icon">
+            <i class="fa-solid fa-suitcase"></i>
+            <input type="text" id="trip-name" placeholder="e.g. Summer in Southern Europe" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="destination">Select a Place / Destination</label>
+          <div class="input-with-icon">
+            <i class="fa-solid fa-location-dot"></i>
+            <input type="text" id="destination" placeholder="City or Country (e.g. Paris, France)" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="start-date">Start Date</label>
+          <div class="input-with-icon">
+            <i class="fa-solid fa-calendar-days"></i>
+            <input type="date" id="start-date" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="end-date">End Date</label>
+          <div class="input-with-icon">
+            <i class="fa-solid fa-calendar-check"></i>
+            <input type="date" id="end-date" required />
+          </div>
+        </div>
+
+        <div class="form-action">
+          <button type="reset" class="btn btn-outline">Reset</button>
+          <button type="submit" class="btn btn-primary">
+            <i class="fa-solid fa-compass"></i> Start Journey
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Suggestions Section (3 Columns x 2 Rows) -->
+    <section class="card">
+      <h2 class="section-title">
+        <i class="fa-solid fa-wand-magic-sparkles"></i> Suggestions for Places to Visit & Activities
+      </h2>
+
+      <div class="suggestions-grid">
+        
+        <!-- Card 1 -->
+        <article class="suggestion-card">
+          <div class="suggestion-img-container">
+            <img src="https://images.unsplash.com/photo-1511739001486-6bfe10ce785f?auto=format&fit=crop&w=600&q=80" alt="Eiffel Tower" />
+            <span class="badge-category">Landmark</span>
+          </div>
+          <div class="suggestion-body">
+            <h3 class="suggestion-title">Eiffel Tower Summit Tour</h3>
+            <p class="suggestion-location"><i class="fa-solid fa-location-dot"></i> Paris, France</p>
+            <div class="suggestion-footer">
+              <span class="price-tag">$45 / person</span>
+              <button class="btn-add"><i class="fa-solid fa-plus"></i> Add</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 2 -->
+        <article class="suggestion-card">
+          <div class="suggestion-img-container">
+            <img src="https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&w=600&q=80" alt="Colosseum" />
+            <span class="badge-category">Historic</span>
+          </div>
+          <div class="suggestion-body">
+            <h3 class="suggestion-title">Colosseum & Roman Forum</h3>
+            <p class="suggestion-location"><i class="fa-solid fa-location-dot"></i> Rome, Italy</p>
+            <div class="suggestion-footer">
+              <span class="price-tag">$35 / person</span>
+              <button class="btn-add"><i class="fa-solid fa-plus"></i> Add</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 3 -->
+        <article class="suggestion-card">
+          <div class="suggestion-img-container">
+            <img src="https://images.unsplash.com/photo-1565099824688-e93eb20fe527?auto=format&fit=crop&w=600&q=80" alt="Louvre Museum" />
+            <span class="badge-category">Museum</span>
+          </div>
+          <div class="suggestion-body">
+            <h3 class="suggestion-title">Louvre Museum Masterpieces</h3>
+            <p class="suggestion-location"><i class="fa-solid fa-location-dot"></i> Paris, France</p>
+            <div class="suggestion-footer">
+              <span class="price-tag">$22 / person</span>
+              <button class="btn-add"><i class="fa-solid fa-plus"></i> Add</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 4 -->
+        <article class="suggestion-card">
+          <div class="suggestion-img-container">
+            <img src="https://images.unsplash.com/photo-1533105079780-92b9be482077?auto=format&fit=crop&w=600&q=80" alt="Santorini" />
+            <span class="badge-category">Sightseeing</span>
+          </div>
+          <div class="suggestion-body">
+            <h3 class="suggestion-title">Oia Sunset Walking Tour</h3>
+            <p class="suggestion-location"><i class="fa-solid fa-location-dot"></i> Santorini, Greece</p>
+            <div class="suggestion-footer">
+              <span class="price-tag">Free Entry</span>
+              <button class="btn-add"><i class="fa-solid fa-plus"></i> Add</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 5 -->
+        <article class="suggestion-card">
+          <div class="suggestion-img-container">
+            <img src="https://images.unsplash.com/photo-1531572753322-ad063cecc140?auto=format&fit=crop&w=600&q=80" alt="Vatican" />
+            <span class="badge-category">Culture</span>
+          </div>
+          <div class="suggestion-body">
+            <h3 class="suggestion-title">Vatican Museums & Chapel</h3>
+            <p class="suggestion-location"><i class="fa-solid fa-location-dot"></i> Vatican City, Italy</p>
+            <div class="suggestion-footer">
+              <span class="price-tag">$40 / person</span>
+              <button class="btn-add"><i class="fa-solid fa-plus"></i> Add</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 6 -->
+        <article class="suggestion-card">
+          <div class="suggestion-img-container">
+            <img src="https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?auto=format&fit=crop&w=600&q=80" alt="Sydney Opera House" />
+            <span class="badge-category">Music & Arts</span>
+          </div>
+          <div class="suggestion-body">
+            <h3 class="suggestion-title">Harbour Sightseeing & Opera</h3>
+            <p class="suggestion-location"><i class="fa-solid fa-location-dot"></i> Sydney, Australia</p>
+            <div class="suggestion-footer">
+              <span class="price-tag">$55 / person</span>
+              <button class="btn-add"><i class="fa-solid fa-plus"></i> Add</button>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+  </main>
+
+</body>
+</html>

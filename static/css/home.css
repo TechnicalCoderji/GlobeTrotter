@@ -1,0 +1,428 @@
+:root {
+  --bg-color: #f0f7fc;
+  --card-bg: #ffffff;
+  --primary-blue: #0284c7;
+  --primary-hover: #0369a1;
+  --accent-green: #10b981;
+  --accent-green-hover: #059669;
+  --text-main: #1e293b;
+  --text-muted: #64748b;
+  --border-color: #e2e8f0;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+body {
+  background-color: #dbeafe;
+  display: flex;
+  justify-content: center;
+  padding: 24px;
+  color: var(--text-main);
+}
+
+/* Main App Card Container */
+.app-container {
+  width: 100%;
+  max-width: 1400px;
+  background: var(--bg-color);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-bottom: 24px;
+}
+
+/* 1. Header / Navbar */
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--card-bg);
+  padding: 14px 28px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.brand-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #0f172a;
+  text-decoration: none;
+}
+
+.brand-logo i {
+  color: var(--primary-blue);
+  font-size: 1.4rem;
+}
+
+.account {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.profile-circle {
+  height: 24px;
+  width: 24px;
+  border-radius: 50%;
+  background: #000;
+  flex-shrink: 0;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  background: #f1f5f9;
+  border-radius: 30px;
+  padding: 8px 16px;
+  width: 360px;
+  gap: 10px;
+}
+
+.search-bar input {
+  border: none;
+  background: transparent;
+  outline: none;
+  width: 100%;
+  font-size: 0.88rem;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  gap: 24px;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: var(--text-muted);
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: color 0.2s;
+}
+
+.nav-links a.active, 
+.nav-links a:hover {
+  color: var(--primary-blue);
+  font-weight: 600;
+}
+
+/* 2. Hero Banner */
+.banner-container {
+  padding: 0 24px;
+}
+
+.hero-banner {
+  position: relative;
+  height: 140px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #0ea5e9, #059669);
+}
+
+.hero-banner img {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.45;
+}
+
+.hero-banner h1 {
+  position: relative;
+  color: white;
+  font-size: 1.8rem;
+  font-weight: 700;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* 3. Dashboard Layout */
+.dashboard-layout {
+  display: grid;
+  grid-template-columns: 80px 300px 1fr 300px;
+  gap: 16px;
+  padding: 0 24px;
+}
+
+.card {
+  background: var(--card-bg);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  padding: 16px;
+}
+
+/* Column 1: Vertical Sidebar */
+.sidebar-menu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 20px 8px;
+}
+
+.menu-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  text-decoration: none;
+  width: 100%;
+  padding: 8px 0;
+  border-radius: var(--radius-sm);
+  transition: 0.2s;
+}
+
+.menu-item i {
+  font-size: 1.25rem;
+}
+
+.menu-item.active {
+  background: #e0f2fe;
+  color: var(--primary-blue);
+  font-weight: 600;
+}
+
+/* Column 2: Map Views & Friends */
+.map-column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.map-preview {
+  height: 280px;
+  background: #e2e8f0;
+  border-radius: var(--radius-sm);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #cbd5e1;
+}
+
+.map-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.tag-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.friends-list {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.avatar-group {
+  display: flex;
+  gap: -8px;
+}
+
+.avatar-group img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+  margin-right: -6px;
+}
+
+/* Column 3: Itinerary Timeline */
+.itinerary-column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.section-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.btn-group {
+  display: flex;
+  gap: 8px;
+}
+
+.btn {
+  border: none;
+  padding: 7px 14px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-outline {
+  background: #f8fafc;
+  color: var(--text-main);
+  border: 1px solid var(--border-color);
+}
+
+.btn-primary {
+  background: var(--primary-blue);
+  color: #fff;
+}
+
+.btn-green {
+  background: var(--accent-green);
+  color: #fff;
+}
+
+.stop-card {
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+
+.stop-header {
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 600;
+  font-size: 0.88rem;
+}
+
+.stop-header.blue { background: #f0f9ff; color: var(--primary-blue); }
+.stop-header.green { background: #f0fdf4; color: var(--accent-green); }
+
+.stop-content {
+  padding: 12px 14px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  background: #fff;
+}
+
+.detail-item {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.activity-preview {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.activity-preview img {
+  width: 48px;
+  height: 48px;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+/* Column 4: Budget & Discover */
+.side-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.budget-value {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 8px 0;
+}
+
+.budget-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.82rem;
+  margin-bottom: 6px;
+}
+
+.activity-suggestion-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.suggestion-card {
+  position: relative;
+  border-radius: 6px;
+  overflow: hidden;
+  height: 80px;
+}
+
+.suggestion-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.suggestion-card span {
+  position: absolute;
+  bottom: 4px;
+  left: 6px;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+}
+/* 1. Reset Body to remove edge padding and blue outer frame */
+body {
+  background-color: var(--bg-color); /* Match dashboard background */
+  margin: 0;
+  padding: 0;
+  display: block; /* Remove flex centering constraint */
+  min-height: 100vh;
+  color: var(--text-main);
+}
+
+/* 2. Expand Main App Container full-width with squared top corners */
+.app-container {
+  width: 100%;
+  max-width: 100%; /* Spans 100% of the screen */
+  border-radius: 0; /* Optional: set to 0 for seamless top-edge header */
+  box-shadow: none;
+  padding-bottom: 24px;
+}
