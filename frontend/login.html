@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - GlobeTrotter</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="auth.css" />
+</head>
+<body>
+
+  <div class="auth-wrapper login-mode">
+    <div class="auth-header">
+      <a href="#" class="brand-logo">
+        <i class="fa-solid fa-earth-americas"></i> GLOBETROTTER
+      </a>
+      <h2>Welcome back</h2>
+      <p>Enter your credentials to access your trips</p>
+    </div>
+
+    <div class="auth-body">
+      <form action="#" method="POST">
+        <div class="form-grid single-col">
+          <div class="form-group">
+            <label for="username">Username</label>
+            <div class="input-with-icon">
+              <i class="fa-solid fa-user"></i>
+              <input type="text" id="username" name="username" placeholder="Enter your username" required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password</label>
+            <div class="input-with-icon">
+              <i class="fa-solid fa-lock"></i>
+              <input type="password" id="password" name="password" placeholder="••••••••" required />
+            </div>
+          </div>
+        </div>
+
+        <div class="form-options">
+          <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+            <input type="checkbox" name="remember" /> Remember me
+          </label>
+          <a href="#">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="btn-submit">
+          <span>Log In</span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </form>
+    </div>
+
+    <div class="auth-footer">
+      Don't have an account? <a href="registration.html">Create an account</a>
+    </div>
+  </div>
+
+</body>
+</html>
