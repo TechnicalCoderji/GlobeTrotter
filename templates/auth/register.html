@@ -1,36 +1,314 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
 
-{% block content %}
+    body {
+      background-color: #121212;
+      color: #ffffff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
 
-<h2>Register</h2>
+    .register-container {
+      background-color: #1e1e1e;
+      border: 1px solid #333;
+      border-radius: 16px;
+      padding: 30px;
+      width: 100%;
+      max-width: 650px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    }
 
-<form method="POST">
-    {% csrf_token %}
+    .register-container h2 {
+      text-align: center;
+      margin-bottom: 24px;
+      font-weight: 600;
+    }
 
-    <label>Full Name</label>
-    <input type="text" name="name" required>
+    /* Django Messages / System Alerts */
+    .alert-messages {
+      margin-bottom: 20px;
+    }
 
-    <label>Username</label>
-    <input type="text" name="username" required>
+    .alert {
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
 
-    <label>Email</label>
-    <input type="email" name="email" required>
+    .alert-error, .alert-danger {
+      background-color: #410e0e;
+      border: 1px solid #f44336;
+      color: #ffcdd2;
+    }
 
-    <label>Password</label>
-    <input type="password" name="password1" required>
+    .alert-warning {
+      background-color: #332a00;
+      border: 1px solid #ffc107;
+      color: #ffe8a1;
+    }
 
-    <label>Confirm Password</label>
-    <input type="password" name="password2" required>
+    .alert-success {
+      background-color: #0d3c11;
+      border: 1px solid #4caf50;
+      color: #c8e6c9;
+    }
 
-    {% for field in form %}
-    {% for error in field.errors %}
-    <div class="error">{{ error }}</div>
-    {% endfor %}
-    {% endfor %}
+    /* Grid Layout */
+    .register-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
 
-    <button type="submit">Register</button>
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
 
-</form>
+    .full-width {
+      grid-column: span 2;
+    }
 
-<p>Already have an account? <a href="{% url 'login' %}">Login</a></p>
-{% endblock %}
+    .form-input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1px solid #444;
+      border-radius: 10px;
+      background: #0d0d0d;
+      color: #ffffff;
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .form-input:focus {
+      border-color: #007bff;
+    }
+
+    .has-error .form-input {
+      border-color: #f44336;
+    }
+
+    /* Specific Field Error Messages */
+    .field-error {
+      color: #ff6b6b;
+      font-size: 12px;
+      margin-top: 6px;
+      list-style: none;
+    }
+
+    .field-error li {
+      margin-bottom: 2px;
+    }
+
+    /* Submit Button */
+    .btn-submit {
+      width: 100%;
+      padding: 14px;
+      border-radius: 10px;
+      background-color: #007bff;
+      color: #ffffff;
+      border: none;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      margin-top: 8px;
+    }
+
+    .btn-submit:hover {
+      background-color: #0056b3;
+    }
+
+    .login-link {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 14px;
+      color: #aaa;
+    }
+
+    .login-link a {
+      color: #007bff;
+      text-decoration: none;
+    }
+
+    .login-link a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 500px) {
+      .register-grid {
+        grid-template-columns: 1fr;
+      }
+      .full-width {
+        grid-column: span 1;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="register-container">
+    <h2>Create Account</h2>
+
+    <!-- Global Django System Alert Messages (Warnings / Errors) -->
+    {% if messages %}
+      <div class="alert-messages">
+        {% for message in messages %}
+          <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <!-- Non-Field Validation Errors (e.g., Password Similarity Checks) -->
+    {% if form.non_field_errors %}
+      <div class="alert alert-danger">
+        {% for error in form.non_field_errors %}
+          <p>{{ error }}</p>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <form method="POST" action="{% url 'register' %}">
+      {% csrf_token %}
+
+      <div class="register-grid">
+        <!-- First Name -->
+        <div class="form-group {% if form.first_name.errors %}has-error{% endif %}">
+          {{ form.first_name }}
+          {% if form.first_name.errors %}
+            <ul class="field-error">
+              {% for error in form.first_name.errors %}
+                <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </div>
+
+        <!-- Last Name -->
+        <div class="form-group {% if form.last_name.errors %}has-error{% endif %}">
+          {{ form.last_name }}
+          {% if form.last_name.errors %}
+            <ul class="field-error">
+              {% for error in form.last_name.errors %}
+                <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </div>
+
+        <!-- Email Address -->
+        <div class="form-group {% if form.email.errors %}has-error{% endif %}">
+          {{ form.email }}
+          {% if form.email.errors %}
+            <ul class="field-error">
+              {% for error in form.email.errors %}
+                <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </div>
+
+        <!-- Phone Number -->
+        <div class="form-group {% if form.phone_number.errors %}has-error{% endif %}">
+          {{ form.phone_number }}
+          {% if form.phone_number.errors %}
+            <ul class="field-error">
+              {% for error in form.phone_number.errors %}
+                <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </div>
+
+        <!-- City -->
+        <div class="form-group {% if form.city.errors %}has-error{% endif %}">
+          {{ form.city }}
+          {% if form.city.errors %}
+            <ul class="field-error">
+              {% for error in form.city.errors %}
+                <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </div>
+
+        <!-- Country -->
+        <div class="form-group {% if form.country.errors %}has-error{% endif %}">
+          {{ form.country }}
+          {% if form.country.errors %}
+            <ul class="field-error">
+              {% for error in form.country.errors %}
+                <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </div>
+
+        <!-- Username (Full Width) -->
+        <div class="form-group full-width {% if form.username.errors %}has-error{% endif %}">
+          <input type="text" name="username" placeholder="Username" class="form-input" value="{{ form.username.value|default:'' }}" required>
+          {% if form.username.errors %}
+            <ul class="field-error">
+              {% for error in form.username.errors %}
+                <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </div>
+
+        <!-- Password 1 -->
+        <div class="form-group {% if form.password1.errors %}has-error{% endif %}">
+          <input type="password" name="password1" placeholder="Password" class="form-input" required>
+          {% if form.password1.errors %}
+            <ul class="field-error">
+              {% for error in form.password1.errors %}
+                <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </div>
+
+        <!-- Password 2 -->
+        <div class="form-group {% if form.password2.errors %}has-error{% endif %}">
+          <input type="password" name="password2" placeholder="Confirm Password" class="form-input" required>
+          {% if form.password2.errors %}
+            <ul class="field-error">
+              {% for error in form.password2.errors %}
+                <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </div>
+
+        <!-- Submit Button -->
+        <div class="full-width">
+          <button type="submit" class="btn-submit">Register</button>
+        </div>
+      </div>
+    </form>
+
+    <div class="login-link">
+      Already have an account? <a href="{% url 'login' %}">Log in</a>
+    </div>
+  </div>
+
+</body>
+</html>
