@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - GlobeTrotter{% endblock %}
+
+{% block content %}
+<!-- Welcome & Quick Action Banner -->
+<div class="page-header" style="background: white; padding: 1.5rem; border-radius: var(--radius); border: 1px solid var(--border); margin-bottom: 1.75rem;">
+    <div>
+        <h1 class="page-title">Welcome back, {{ user.first_name|default:user.username }}! 👋</h1>
+        <p class="page-subtitle">Ready to design your next journey? Plan new itineraries or manage your ongoing travels.</p>
+    </div>
+    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+        <a href="{% url 'trip_create' %}" class="btn btn-primary btn-lg">+ Plan New Trip</a>
+        <a href="{% url 'ai_tools' %}" class="btn btn-ai btn-lg">⚡ AI Generator</a>
+    </div>
+</div>
+
+<!-- Stats Summary -->
+<div class="grid grid-cols-4" style="margin-bottom: 1.75rem;">
+    <div class="card" style="margin-bottom: 0; display: flex; align-items: center; gap: 1rem;">
+        <div style="font-size: 2.2rem; background: var(--primary-light); padding: 0.5rem 0.8rem; border-radius: var(--radius);">✈️</div>
+        <div>
+            <div style="font-size: 1.6rem; font-weight: 800; color: #0f172a;">{{ total_trips }}</div>
+            <div style="font-size: 0.85rem; color: var(--text-muted);">Total Trips Created</div>
+        </div>
+    </div>
+
+    <div class="card" style="margin-bottom: 0; display: flex; align-items: center; gap: 1rem;">
+        <div style="font-size: 2.2rem; background: var(--success-light); padding: 0.5rem 0.8rem; border-radius: var(--radius);">🌍</div>
+        <div>
+            <div style="font-size: 1.6rem; font-weight: 800; color: #15803d;">{{ ongoing_trips.count }}</div>
+            <div style="font-size: 0.85rem; color: var(--text-muted);">Ongoing Journeys</div>
+        </div>
+    </div>
+
+    <div class="card" style="margin-bottom: 0; display: flex; align-items: center; gap: 1rem;">
+        <div style="font-size: 2.2rem; background: #fef3c7; padding: 0.5rem 0.8rem; border-radius: var(--radius);">🗓️</div>
+        <div>
+            <div style="font-size: 1.6rem; font-weight: 800; color: #b45309;">{{ upcoming_trips.count }}</div>
+            <div style="font-size: 0.85rem; color: var(--text-muted);">Upcoming Adventures</div>
+        </div>
+    </div>
+
+    <div class="card" style="margin-bottom: 0; display: flex; align-items: center; gap: 1rem;">
+        <div style="font-size: 2.2rem; background: #f3e8ff; padding: 0.5rem 0.8rem; border-radius: var(--radius);">💵</div>
+        <div>
+            <div style="font-size: 1.6rem; font-weight: 800; color: #7e22ce;">${{ total_spent|floatformat:0 }}</div>
+            <div style="font-size: 0.85rem; color: var(--text-muted);">Total Itinerary Cost</div>
+        </div>
+    </div>
+</div>
+
+<!-- Ongoing Trips Section (if any) -->
+{% if ongoing_trips %}
+<div style="margin-bottom: 2rem;">
+    <div class="page-header" style="margin-bottom: 1rem;">
+        <h2 class="page-title" style="font-size: 1.3rem; color: var(--success);">🟢 Ongoing Trips Right Now</h2>
+    </div>
+    <div class="grid grid-cols-2">
+        {% for trip in ongoing_trips %}
+            <div class="trip-card" style="border-left: 4px solid var(--success);">
+                <div class="trip-card-body">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div>
+                            <span class="badge badge-success">Ongoing</span>
+                            <h3 style="font-size: 1.25rem; font-weight: 700; margin-top: 0.3rem;">{{ trip.title }}</h3>
+                            <p style="font-size: 0.88rem; color: var(--text-muted);">📍 {{ trip.destination_display }}</p>
+                        </div>
+                        <div style="text-align: right;">
+                            <span style="font-weight: 700; font-size: 1.1rem; color: var(--primary);">${{ trip.total_cost }}</span>
+                            <div style="font-size: 0.8rem; color: var(--text-muted);">Target: ${{ trip.budget }}</div>
+                        </div>
+                    </div>
+                    <div style="margin: 0.75rem 0; font-size: 0.85rem; color: #475569;">
+                        ⏱️ {{ trip.start_date|date:"M d, Y" }} &ndash; {{ trip.end_date|date:"M d, Y" }} ({{ trip.duration_days }} Days) &bull; {{ trip.total_activities }} Planned Activities
+                    </div>
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar-fill {% if trip.is_overbudget %}overbudget{% endif %}" style="width: {{ trip.budget_progress_percentage }}%;"></div>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem; margin-top: 0.75rem;">
+                        <a href="{% url 'itinerary_builder' trip.id %}" class="btn btn-primary btn-sm" style="flex: 1;">Open Itinerary</a>
+                        <a href="{% url 'trip_calendar' trip.id %}" class="btn btn-secondary btn-sm">Calendar</a>
+                        <a href="{% url 'trip_budget' trip.id %}" class="btn btn-secondary btn-sm">Budget</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<!-- Upcoming & Recent Trips Section -->
+<div style="margin-bottom: 2rem;">
+    <div class="page-header" style="margin-bottom: 1rem;">
+        <div>
+            <h2 class="page-title" style="font-size: 1.3rem;">My Upcoming &amp; Recent Trips</h2>
+            <p class="page-subtitle">Your personalized multi-city travel itineraries</p>
+        </div>
+        <a href="{% url 'trip_list' %}" class="btn btn-secondary btn-sm">View All ({{ total_trips }}) &rarr;</a>
+    </div>
+
+    {% if recent_trips %}
+        <div class="grid grid-cols-3">
+            {% for trip in recent_trips %}
+                <div class="trip-card">
+                    <img src="{{ trip.cover_image }}" alt="{{ trip.title }}" class="trip-card-img">
+                    <div class="trip-card-body">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.4rem;">
+                            <h4 style="font-weight: 700; font-size: 1.1rem; color: #0f172a;">{{ trip.title }}</h4>
+                            <span class="badge {% if trip.status == 'Upcoming' %}badge-primary{% elif trip.status == 'Ongoing' %}badge-success{% else %}badge-muted{% endif %}">
+                                {{ trip.status }}
+                            </span>
+                        </div>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">
+                            📍 {{ trip.destination_display }}
+                        </p>
+                        <p style="font-size: 0.85rem; color: #475569; margin-bottom: 0.75rem;">
+                            📅 {{ trip.start_date|date:"M d" }} &ndash; {{ trip.end_date|date:"M d, Y" }} ({{ trip.duration_days }} Days)
+                        </p>
+                        <div style="font-size: 0.85rem; color: #334155; margin-top: auto; display: flex; justify-content: space-between;">
+                            <span>Activities: <strong>{{ trip.total_activities }}</strong></span>
+                            <span>Spent: <strong>${{ trip.total_cost }}</strong></span>
+                        </div>
+                    </div>
+                    <div class="trip-card-footer">
+                        <a href="{% url 'itinerary_builder' trip.id %}" class="btn btn-primary btn-sm">Itinerary Builder</a>
+                        <a href="{% url 'trip_budget' trip.id %}" class="btn btn-secondary btn-sm">Budget</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="card" style="text-align: center; padding: 2.5rem 1rem;">
+            <div style="font-size: 3rem; margin-bottom: 0.75rem;">🗺️</div>
+            <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.4rem;">No trips created yet!</h3>
+            <p style="color: var(--text-muted); max-width: 450px; margin: 0 auto 1.25rem;">Start by creating your first trip or use our AI Itinerary Generator to build a complete itinerary in seconds.</p>
+            <a href="{% url 'trip_create' %}" class="btn btn-primary btn-lg">+ Plan Your First Trip</a>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Recommended Destinations (Screen 3 Wireframe) -->
+<div style="margin-bottom: 2rem;">
+    <div class="page-header" style="margin-bottom: 1rem;">
+        <div>
+            <h2 class="page-title" style="font-size: 1.3rem;">Explore Popular Destinations</h2>
+            <p class="page-subtitle">Pick a city to quickly kickstart your itinerary with curated local activities</p>
+        </div>
+        <a href="{% url 'city_search' %}" class="btn btn-secondary btn-sm">Browse All Cities &rarr;</a>
+    </div>
+
+    <div class="grid grid-cols-4">
+        {% for city in recommended_cities %}
+            <div class="trip-card">
+                <img src="{{ city.image_url }}" alt="{{ city.name }}" class="trip-card-img" style="height: 130px;">
+                <div class="trip-card-body">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.2rem;">
+                        <h4 style="font-weight: 700; font-size: 1rem;">{{ city.name }}</h4>
+                        <span class="badge badge-primary" style="font-size: 0.7rem;">{{ city.cost_label }}</span>
+                    </div>
+                    <p style="font-size: 0.8rem; color: var(--text-muted);">📍 {{ city.country }}</p>
+                    <p style="font-size: 0.82rem; color: #475569; margin-top: 0.4rem; line-height: 1.3;">{{ city.description|truncatewords:10 }}</p>
+                </div>
+                <div class="trip-card-footer">
+                    <a href="{% url 'activity_search' %}?city_id={{ city.id }}" style="font-size: 0.82rem;">Activities</a>
+                    <a href="{% url 'trip_create' %}?city_id={{ city.id }}" class="btn btn-primary btn-sm">Plan Trip</a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Community Trips Highlights -->
+{% if community_trips %}
+<div>
+    <div class="page-header" style="margin-bottom: 1rem;">
+        <div>
+            <h2 class="page-title" style="font-size: 1.3rem;">From the Community</h2>
+            <p class="page-subtitle">Public itineraries from fellow travelers you can clone and customize</p>
+        </div>
+        <a href="{% url 'community' %}" class="btn btn-secondary btn-sm">Community Feed &rarr;</a>
+    </div>
+
+    <div class="grid grid-cols-3">
+        {% for ct in community_trips %}
+            <div class="trip-card">
+                <div class="trip-card-body">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <h4 style="font-weight: 700; font-size: 1.05rem;">{{ ct.title }}</h4>
+                        <span class="badge badge-success">Public</span>
+                    </div>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0.3rem 0;">📍 {{ ct.destination_display }} &bull; ⏱️ {{ ct.duration_days }} Days</p>
+                    <p style="font-size: 0.85rem; color: #475569;">By <strong>@{{ ct.user.username }}</strong> &bull; {{ ct.total_activities }} activities</p>
+                </div>
+                <div class="trip-card-footer">
+                    <a href="{% url 'trip_detail' ct.id %}" class="btn btn-secondary btn-sm">Inspect</a>
+                    <a href="{% url 'trip_copy' ct.id %}" class="btn btn-primary btn-sm">Copy to My Trips</a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}Explore Activities in {{ city_query }} - GlobeTrotter{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">✨ Places &amp; Activities in {{ city_query }}</h1>
+        <p class="page-subtitle">Real-time AI curated places, temple darshans, food spots, and activities</p>
+    </div>
+    <a href="{% url 'start_trip' %}" class="btn btn-primary">+ Plan New Multi-City Trip</a>
+</div>
+
+<!-- Search by City -->
+<div class="card" style="padding: 1.25rem;">
+    <form method="GET" action="{% url 'activity_search' %}" style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+        <div style="flex: 2; min-width: 200px;">
+            <label style="font-size: 0.85rem;">City / Destination Name</label>
+            <input type="text" name="city" value="{{ city_query }}" placeholder="e.g. Dwarka, Somnath, Varanasi, Manali, Goa" required>
+        </div>
+
+        <div style="flex: 1; min-width: 150px;">
+            <label style="font-size: 0.85rem;">Category Filter</label>
+            <select name="type">
+                <option value="">-- All Categories --</option>
+                <option value="sightseeing" {% if selected_type == 'sightseeing' %}selected{% endif %}>Sightseeing</option>
+                <option value="culture" {% if selected_type == 'culture' %}selected{% endif %}>Culture &amp; Temples</option>
+                <option value="food" {% if selected_type == 'food' %}selected{% endif %}>Food &amp; Dining</option>
+                <option value="adventure" {% if selected_type == 'adventure' %}selected{% endif %}>Adventure</option>
+                <option value="relaxation" {% if selected_type == 'relaxation' %}selected{% endif %}>Relaxation</option>
+            </select>
+        </div>
+
+        <div style="display: flex; align-items: flex-end;">
+            <button type="submit" class="btn btn-primary">Fetch with AI</button>
+        </div>
+    </form>
+</div>
+
+<!-- Results List with INR prices -->
+<div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1.5rem;">
+    {% for act in activities %}
+        <div class="card" style="margin-bottom: 0; padding: 1.25rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.25rem;">
+            <div style="flex: 1; min-width: 280px;">
+                <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.35rem;">
+                    <h3 style="font-size: 1.15rem; font-weight: 700; color: #0f172a;">{{ act.name }}</h3>
+                    <span class="badge tag-{{ act.category|lower }}">{{ act.category|title }}</span>
+                </div>
+                <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">
+                    ⏱️ Duration: <strong>{{ act.duration|default:"2 hours" }}</strong> &bull; 
+                    Estimated Cost: <strong style="color: var(--primary); font-size: 1rem;">₹{{ act.estimated_cost|default:"200" }}</strong>
+                </div>
+                <p style="font-size: 0.88rem; color: #475569; line-height: 1.4;">
+                    {{ act.description }}
+                </p>
+            </div>
+
+            <div>
+                <a href="{% url 'start_trip' %}?city_query={{ city_query }}" class="btn btn-primary btn-sm">Plan Trip with this</a>
+            </div>
+        </div>
+    {% empty %}
+        <div class="card" style="text-align: center; padding: 2rem;">
+            <p style="color: var(--text-muted);">No activities found. Try searching for a different destination like Dwarka or Somnath.</p>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}Step 2: Pick Activities in {{ city }} - GlobeTrotter{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">✨ Step 2: Choose Activities with AI</h1>
+        <p class="page-subtitle">What would you like to experience in <strong>{{ city }}</strong>?</p>
+    </div>
+    <a href="{% url 'start_trip' %}" class="btn btn-secondary">&larr; Back to Destinations</a>
+</div>
+
+<!-- Progress Meter -->
+<div class="card" style="padding: 0.75rem 1.25rem; margin-bottom: 1.5rem; background: #f8fafc;">
+    <div style="display: flex; justify-content: space-between; font-size: 0.88rem; font-weight: 600; margin-bottom: 0.3rem;">
+        <span>Planning Stop: <strong style="color: var(--primary);">{{ city }}</strong></span>
+        <span>Stops Completed: {{ trip_draft.events|length }} / {{ trip_draft.cities|length }}</span>
+    </div>
+    <div class="progress-bar-bg">
+        <div class="progress-bar-fill" style="width: {% widthratio trip_draft.events|length trip_draft.cities|length 100 %}%;"></div>
+    </div>
+</div>
+
+<div class="grid grid-cols-3" style="align-items: start;">
+    <div class="card" style="grid-column: span 2;">
+        <div class="card-header">
+            <h3 class="card-title">🤖 AI Recommended Activities in {{ city }}</h3>
+            <span class="badge badge-success">Live AI Suggestions</span>
+        </div>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.5rem;">
+                {% if activities %}
+                    {% for activity in activities %}
+                        <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.85rem; display: flex; align-items: flex-start; gap: 0.75rem;">
+                            <input type="checkbox" name="selected_events" value="{{ activity.name }}" id="act_{{ forloop.counter }}" checked style="width: 20px; height: 20px; margin-top: 0.2rem; cursor: pointer;">
+                            <label for="act_{{ forloop.counter }}" style="flex: 1; cursor: pointer; margin: 0;">
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.4rem;">
+                                    <strong style="font-size: 1rem; color: #0f172a;">{{ activity.name }}</strong>
+                                    <span style="font-weight: 700; color: var(--primary); font-size: 0.95rem;">
+                                        ₹{{ activity.estimated_cost|default:"200" }}
+                                    </span>
+                                </div>
+                                <div style="font-size: 0.8rem; color: var(--text-muted); margin: 0.2rem 0;">
+                                    <span class="badge tag-{{ activity.category|lower }}">{{ activity.category|default:"sightseeing"|title }}</span>
+                                    &bull; ⏱️ {{ activity.duration|default:"2 hours" }}
+                                </div>
+                                <p style="font-size: 0.85rem; color: #475569; margin-top: 0.25rem; line-height: 1.35;">
+                                    {{ activity.description }}
+                                </p>
+                            </label>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p style="color: var(--text-muted);">Could not fetch dynamic activities. You can add a custom activity below.</p>
+                {% endif %}
+            </div>
+
+            <!-- Custom Activity Input -->
+            <div style="background: #eff6ff; border: 1px dashed #93c5fd; border-radius: var(--radius-sm); padding: 1rem; margin-bottom: 1.5rem;">
+                <h4 style="font-size: 0.95rem; font-weight: 700; color: #1e40af; margin-bottom: 0.5rem;">+ Add Custom Place or Event in {{ city }}</h4>
+                <div class="grid grid-cols-3" style="gap: 0.5rem;">
+                    <div style="grid-column: span 2;">
+                        <input type="text" name="custom_activity" placeholder="e.g. Visit Local Handicraft Market or Special Temple Darshan">
+                    </div>
+                    <div>
+                        <input type="number" name="custom_cost" placeholder="Cost in ₹ (e.g. 250)" min="0">
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-lg btn-block">
+                Save &amp; Proceed to Next Destination &rarr;
+            </button>
+        </form>
+    </div>
+
+    <!-- Right Column: Itinerary Overview -->
+    <div>
+        <div class="card">
+            <h4 style="font-size: 1rem; font-weight: 700; margin-bottom: 0.75rem;">Selected Stops in Journey</h4>
+            <div style="display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.88rem;">
+                {% for c in trip_draft.cities %}
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem; background: #f8fafc; border-radius: 4px; border: 1px solid var(--border);">
+                        <span>{{ forloop.counter }}. {{ c }}</span>
+                        {% if c in trip_draft.events %}
+                            <span class="badge badge-success">✓ Configured</span>
+                        {% elif c == city %}
+                            <span class="badge badge-primary">Current</span>
+                        {% else %}
+                            <span class="badge badge-muted">Pending</span>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

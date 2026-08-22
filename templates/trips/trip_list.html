@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}My Trips - GlobeTrotter{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">My Travel Journeys</h1>
+        <p class="page-subtitle">Manage, edit, and review all your planned and past travel itineraries</p>
+    </div>
+    <div style="display: flex; gap: 0.75rem;">
+        <a href="{% url 'start_trip' %}" class="btn btn-primary">+ Plan New Trip</a>
+        <a href="{% url 'ai_tools' %}" class="btn btn-ai">⚡ AI Generator</a>
+    </div>
+</div>
+
+<!-- Search Bar -->
+<div class="card" style="padding: 0.85rem 1.25rem; margin-bottom: 1.5rem;">
+    <form method="GET" action="{% url 'trip_list' %}" style="display: flex; gap: 0.75rem;">
+        <input type="text" name="q" value="{{ query }}" placeholder="Search my trips by name, destination, or notes..." style="flex: 1;">
+        <button type="submit" class="btn btn-secondary">Search</button>
+        {% if query %}
+            <a href="{% url 'trip_list' %}" class="btn btn-secondary">Clear</a>
+        {% endif %}
+    </form>
+</div>
+
+<!-- ONGOING TRIPS -->
+<div style="margin-bottom: 2rem;">
+    <h3 style="font-size: 1.2rem; font-weight: 700; color: #15803d; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+        🟢 Ongoing Journeys ({{ ongoing_trips|length }})
+    </h3>
+    {% if ongoing_trips %}
+        <div class="grid grid-cols-3">
+            {% for trip in ongoing_trips %}
+                {% include "trips/includes/trip_card.html" with trip=trip %}
+            {% endfor %}
+        </div>
+    {% else %}
+        <p style="color: var(--text-muted); font-size: 0.9rem; font-style: italic;">No journeys currently underway.</p>
+    {% endif %}
+</div>
+
+<!-- UPCOMING / PLANNED TRIPS -->
+<div style="margin-bottom: 2rem;">
+    <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--primary); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+        🗓️ Upcoming / Planned Adventures ({{ upcoming_trips|length }})
+    </h3>
+    {% if upcoming_trips %}
+        <div class="grid grid-cols-3">
+            {% for trip in upcoming_trips %}
+                {% include "trips/includes/trip_card.html" with trip=trip %}
+            {% endfor %}
+        </div>
+    {% else %}
+        <p style="color: var(--text-muted); font-size: 0.9rem; font-style: italic;">No upcoming trips scheduled. Time to plan one!</p>
+    {% endif %}
+</div>
+
+<!-- COMPLETED / PREVIOUS TRIPS -->
+<div style="margin-bottom: 2rem;">
+    <h3 style="font-size: 1.2rem; font-weight: 700; color: #475569; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+        ✨ Completed Journeys ({{ completed_trips|length }})
+    </h3>
+    {% if completed_trips %}
+        <div class="grid grid-cols-3">
+            {% for trip in completed_trips %}
+                {% include "trips/includes/trip_card.html" with trip=trip %}
+            {% endfor %}
+        </div>
+    {% else %}
+        <p style="color: var(--text-muted); font-size: 0.9rem; font-style: italic;">No completed journeys logged yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

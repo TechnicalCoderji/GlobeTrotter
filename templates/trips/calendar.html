@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Calendar View: {{ trip.name }} - GlobeTrotter{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">📅 Trip Calendar &amp; Schedule Timeline</h1>
+        <p class="page-subtitle">Schedule overview for <strong>{{ trip.name }}</strong> ({{ trip.duration_days }} Days)</p>
+    </div>
+    <div style="display: flex; gap: 0.5rem;">
+        <a href="{% url 'itinerary_builder' trip.id %}" class="btn btn-primary btn-sm">&larr; Itinerary Builder</a>
+        <a href="{% url 'trip_budget' trip.id %}" class="btn btn-secondary btn-sm">💰 Budget View (₹)</a>
+        <a href="{% url 'trip_export_json' trip.id %}" class="btn btn-secondary btn-sm">📥 Export JSON</a>
+    </div>
+</div>
+
+<div class="card" style="padding: 1.5rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.75rem;">
+        <div>
+            <h2 style="font-size: 1.25rem; font-weight: 700;">{{ trip.start_date|date:"F Y" }} Travel Schedule</h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">{{ trip.start_date|date:"l, M d, Y" }} &ndash; {{ trip.end_date|date:"l, M d, Y" }}</p>
+        </div>
+        <span class="badge badge-primary" style="font-size: 0.95rem; padding: 0.4rem 0.8rem;">
+            Total Estimated: ₹{{ trip.total_cost }}
+        </span>
+    </div>
+
+    <!-- Timeline / Day-Wise Schedule Grid -->
+    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+        {% for day in calendar_days %}
+            <div style="border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; background: #ffffff;">
+                <div style="background: #f8fafc; padding: 0.75rem 1.25rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <div style="background: var(--primary); color: white; padding: 0.3rem 0.65rem; border-radius: var(--radius-sm); font-weight: 700; font-size: 0.9rem;">
+                            Day {{ day.day_number }}
+                        </div>
+                        <div>
+                            <strong style="font-size: 1.05rem; color: #0f172a;">{{ day.date|date:"l, M d, Y"|default:"Day Schedule" }}</strong>
+                            {% if day.city_name %}
+                                <span class="badge tag-culture" style="margin-left: 0.4rem;">📍 {{ day.city_name }}</span>
+                            {% endif %}
+                            <span style="color: var(--text-muted); font-size: 0.9rem; margin-left: 0.4rem;">&bull; {{ day.title|default:"Exploration" }}</span>
+                        </div>
+                    </div>
+                    <span style="font-weight: 600; font-size: 0.9rem; color: #475569;">
+                        Day Total: <strong style="color: var(--primary);">₹{{ day.total_cost }}</strong>
+                    </span>
+                </div>
+
+                <div style="padding: 1rem 1.25rem;">
+                    {% if day.notes %}
+                        <p style="font-size: 0.85rem; color: #92400e; background: #fffbeb; padding: 0.4rem 0.75rem; border-radius: 4px; margin-bottom: 0.75rem;">
+                            📝 {{ day.notes }}
+                        </p>
+                    {% endif %}
+
+                    {% if day.items %}
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th style="width: 130px;">Time</th>
+                                        <th>Activity / Place</th>
+                                        <th style="width: 150px;">Category</th>
+                                        <th style="width: 110px;">Est. Cost</th>
+                                        <th>Notes &amp; Details</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in day.items %}
+                                        <tr>
+                                            <td><strong>⏰ {{ item.time }}</strong></td>
+                                            <td><strong>{{ item.name }}</strong></td>
+                                            <td><span class="badge tag-{{ item.category|lower }}">{{ item.display_category }}</span></td>
+                                            <td><strong style="color: var(--primary);">₹{{ item.estimated_cost }}</strong></td>
+                                            <td style="font-size: 0.85rem; color: #64748b;">{{ item.description|default:"-" }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p style="color: var(--text-muted); font-size: 0.88rem; font-style: italic;">No activities scheduled for this day yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        {% empty %}
+            <p style="color: var(--text-muted); text-align: center; padding: 2rem;">No days scheduled in this trip.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

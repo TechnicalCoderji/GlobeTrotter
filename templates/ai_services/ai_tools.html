@@ -1,0 +1,357 @@
+{% extends "base.html" %}
+
+{% block title %}AI Travel Lab - GlobeTrotter{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">⚡ GlobeTrotter AI Travel Lab</h1>
+        <p class="page-subtitle">Test and interact with our AI-powered travel tools and REST API endpoints (All prices in ₹ INR)</p>
+    </div>
+    {% if user.is_authenticated %}
+        <a href="{% url 'start_trip' %}" class="btn btn-primary">+ Plan New Trip</a>
+    {% endif %}
+</div>
+
+<!-- Tabs for the 3 AI Tools -->
+<div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('itinerary-tab', this)">1. AI Itinerary Generator</button>
+    <button class="tab-btn" onclick="switchTab('budget-tab', this)">2. Smart Budget Suggestion (₹)</button>
+    <button class="tab-btn" onclick="switchTab('activities-tab', this)">3. Activity Recommendations</button>
+</div>
+
+<div class="grid grid-cols-2" style="align-items: start;">
+    <!-- Left Column: Tool Input Forms -->
+    <div>
+        <!-- TAB 1: Itinerary Generator -->
+        <div id="itinerary-tab" class="card tab-pane">
+            <div class="card-header">
+                <div>
+                    <h3 class="card-title">1. Generate Day-Wise Travel Itinerary</h3>
+                    <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.2rem;">
+                        Endpoint: <code>POST /ai/generate-itinerary/</code>
+                    </p>
+                </div>
+                <span class="badge badge-primary">Free AI API</span>
+            </div>
+
+            <form id="form-itinerary" onsubmit="runItineraryGenerator(event)">
+                <div class="form-group">
+                    <label>Destination City / Region *</label>
+                    <input type="text" id="itin-dest" value="Dwarka & Somnath, Gujarat" placeholder="e.g. Dwarka, Somnath, Varanasi, Manali, Paris" required>
+                </div>
+
+                <div class="grid grid-cols-2" style="gap: 0.75rem;">
+                    <div class="form-group">
+                        <label>Number of Days (1-14) *</label>
+                        <input type="number" id="itin-days" value="3" min="1" max="14" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Target Budget (₹ INR) *</label>
+                        <input type="number" id="itin-budget" value="15000" step="500" min="1000" required>
+                    </div>
+                </div>
+
+                {% if user.is_authenticated and user_trips %}
+                    <div class="form-group" style="background: #f8fafc; padding: 0.6rem 0.8rem; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                        <label style="font-size: 0.82rem;">Optional: Auto-save generated days to existing trip:</label>
+                        <select id="itin-trip-id">
+                            <option value="">-- Do not save (Preview Only) --</option>
+                            {% for trip in user_trips %}
+                                <option value="{{ trip.id }}">{{ trip.name }} ({{ trip.destination_display }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                {% endif %}
+
+                <button type="submit" id="btn-itin" class="btn btn-ai btn-block btn-lg">⚡ Generate AI Itinerary (in ₹)</button>
+            </form>
+        </div>
+
+        <!-- TAB 2: Smart Budget -->
+        <div id="budget-tab" class="card tab-pane" style="display: none;">
+            <div class="card-header">
+                <div>
+                    <h3 class="card-title">2. Smart Budget Suggestion in Rupees (₹)</h3>
+                    <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.2rem;">
+                        Endpoint: <code>POST /ai/budget/</code>
+                    </p>
+                </div>
+                <span class="badge badge-success">Smart INR Estimator</span>
+            </div>
+
+            <form id="form-budget" onsubmit="runBudgetSuggester(event)">
+                <div class="form-group">
+                    <label>Destination City / Country *</label>
+                    <input type="text" id="budget-dest" value="Dwarka, Gujarat" placeholder="e.g. Dwarka, Somnath, Varanasi, Goa" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Number of Travel Days *</label>
+                    <input type="number" id="budget-days" value="4" min="1" max="30" required>
+                </div>
+
+                <button type="submit" id="btn-budget" class="btn btn-success btn-block btn-lg">💰 Estimate Budget Breakdown (in ₹)</button>
+            </form>
+        </div>
+
+        <!-- TAB 3: Activity Recommendations -->
+        <div id="activities-tab" class="card tab-pane" style="display: none;">
+            <div class="card-header">
+                <div>
+                    <h3 class="card-title">3. Activity Recommendation</h3>
+                    <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.2rem;">
+                        Endpoint: <code>POST /ai/activities/</code>
+                    </p>
+                </div>
+                <span class="badge badge-warning">Local Guide AI</span>
+            </div>
+
+            <form id="form-activities" onsubmit="runActivityRecommender(event)">
+                <div class="form-group">
+                    <label>City / Destination Name *</label>
+                    <input type="text" id="act-city" value="Somnath" placeholder="e.g. Somnath, Dwarka, Varanasi, Manali" required>
+                </div>
+
+                <button type="submit" id="btn-act" class="btn btn-primary btn-block btn-lg">🔍 Discover AI Recommended Places</button>
+            </form>
+        </div>
+
+        <!-- Quick Destination Presets -->
+        <div class="card" style="margin-top: 1rem; padding: 1rem;">
+            <h4 style="font-size: 0.88rem; font-weight: 700; margin-bottom: 0.5rem; color: #475569;">Quick Preset Fill:</h4>
+            <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+                <button type="button" class="btn btn-secondary btn-sm" onclick="setPreset('Dwarka, Gujarat', 3, 12000)">Dwarka</button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="setPreset('Somnath, Gujarat', 2, 8000)">Somnath</button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="setPreset('Varanasi, UP', 3, 10000)">Varanasi</button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="setPreset('Manali, HP', 4, 16000)">Manali</button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="setPreset('Goa, India', 4, 18000)">Goa</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column: Live Output & Visual Response Viewer -->
+    <div>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title" id="output-title">AI Response Output</h3>
+                <span id="response-status" class="badge badge-muted">Ready</span>
+            </div>
+
+            <!-- Loading Spinner -->
+            <div id="loading-box" style="display: none; text-align: center; padding: 2rem;">
+                <div style="font-size: 2.5rem;">🤖⚡</div>
+                <p style="font-weight: 600; color: #4338ca; margin-top: 0.5rem;">Querying Dynamic AI Model...</p>
+            </div>
+
+            <!-- Visual Preview Container -->
+            <div id="visual-output" style="margin-bottom: 1rem;">
+                <div style="text-align: center; color: var(--text-muted); padding: 2rem 1rem;">
+                    <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">✨</div>
+                    <p>Select an AI tool and click execute to view live structured responses and interactive travel plans with real pricing in ₹.</p>
+                </div>
+            </div>
+
+            <!-- Raw JSON Toggle & Box -->
+            <details>
+                <summary style="font-size: 0.85rem; font-weight: 600; color: var(--primary); cursor: pointer; outline: none; margin-bottom: 0.5rem;">
+                    Inspect Raw JSON Response Payload
+                </summary>
+                <div id="json-output" class="json-box">
+{
+  "status": "awaiting_request"
+}
+                </div>
+            </details>
+        </div>
+    </div>
+</div>
+
+<script>
+function switchTab(tabId, btn) {
+    document.querySelectorAll('.tab-pane').forEach(el => el.style.display = 'none');
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+    document.getElementById(tabId).style.display = 'block';
+    btn.classList.add('active');
+}
+
+function setPreset(dest, days, budget) {
+    const d1 = document.getElementById('itin-dest');
+    const d2 = document.getElementById('budget-dest');
+    const d3 = document.getElementById('act-city');
+    const days1 = document.getElementById('itin-days');
+    const days2 = document.getElementById('budget-days');
+    const b1 = document.getElementById('itin-budget');
+
+    if (d1) d1.value = dest;
+    if (d2) d2.value = dest;
+    if (d3) d3.value = dest.split(',')[0].trim();
+    if (days1) days1.value = days;
+    if (days2) days2.value = days;
+    if (b1) b1.value = budget;
+}
+
+function showLoading(title) {
+    document.getElementById('output-title').innerText = title;
+    document.getElementById('loading-box').style.display = 'block';
+    document.getElementById('visual-output').style.display = 'none';
+    document.getElementById('response-status').className = 'badge badge-primary';
+    document.getElementById('response-status').innerText = 'Generating...';
+}
+
+function hideLoading(statusText, isSuccess) {
+    document.getElementById('loading-box').style.display = 'none';
+    document.getElementById('visual-output').style.display = 'block';
+    document.getElementById('response-status').className = isSuccess ? 'badge badge-success' : 'badge badge-danger';
+    document.getElementById('response-status').innerText = statusText;
+}
+
+function renderJson(data) {
+    document.getElementById('json-output').innerText = JSON.stringify(data, null, 2);
+}
+
+// 1. Run Itinerary Generator
+function runItineraryGenerator(e) {
+    e.preventDefault();
+    const dest = document.getElementById('itin-dest').value.trim();
+    const days = document.getElementById('itin-days').value;
+    const budget = document.getElementById('itin-budget').value;
+    const tripSelect = document.getElementById('itin-trip-id');
+    const tripId = tripSelect ? tripSelect.value : null;
+
+    showLoading('Generating ' + days + '-Day Itinerary for ' + dest);
+
+    fetch('/ai/generate-itinerary/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            destination: dest,
+            number_of_days: days,
+            budget: budget,
+            trip_id: tripId,
+            auto_save: !!tripId
+        })
+    })
+    .then(r => r.json())
+    .then(data => {
+        hideLoading('200 OK', true);
+        renderJson(data);
+
+        let html = '<div style="margin-bottom: 1rem;">';
+        html += '<h3 style="font-size: 1.15rem; font-weight: 700; color: #0f172a;">🗺️ ' + (data.destination || dest) + '</h3>';
+        html += '<p style="font-size: 0.85rem; color: var(--text-muted);">' + (data.days_count || days) + ' Days &bull; Target: ₹' + (data.total_budget || budget) + '</p>';
+        if (data.saved_to_trip) {
+            html += '<div style="background: var(--success-light); color: #15803d; padding: 0.5rem 0.75rem; border-radius: 4px; font-size: 0.85rem; margin-top: 0.5rem;">✓ Saved to trip! <a href="/trips/' + data.trip_id + '/itinerary/" style="font-weight: 700;">Open Trip &rarr;</a></div>';
+        }
+        html += '</div>';
+
+        if (data.days && Array.isArray(data.days)) {
+            data.days.forEach(d => {
+                html += '<div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 6px; padding: 0.85rem; margin-bottom: 0.75rem;">';
+                html += '<strong style="color: var(--primary); font-size: 0.95rem;">Day ' + (d.day || 1) + ': ' + (d.theme || 'Plan') + '</strong>';
+                if (d.notes) html += '<p style="font-size: 0.82rem; color: #64748b; margin: 0.25rem 0 0.5rem;">' + d.notes + '</p>';
+                if (d.activities) {
+                    html += '<div style="display: flex; flex-direction: column; gap: 0.4rem; margin-top: 0.4rem;">';
+                    d.activities.forEach(a => {
+                        html += '<div style="background: white; border: 1px solid #e2e8f0; padding: 0.5rem 0.75rem; border-radius: 4px; font-size: 0.85rem; display: flex; justify-content: space-between;">';
+                        html += '<div><strong>⏰ ' + (a.time || '09:00 AM') + '</strong> - ' + (a.activity_name || a.name || 'Activity') + ' <span class="badge tag-' + (a.category || 'sightseeing') + '" style="font-size: 0.7rem;">' + (a.category || 'sightseeing') + '</span><div style="font-size: 0.8rem; color: #64748b;">' + (a.description || '') + '</div></div>';
+                        html += '<strong style="color: var(--primary); margin-left: 0.5rem;">₹' + (a.estimated_cost || 200) + '</strong>';
+                        html += '</div>';
+                    });
+                    html += '</div>';
+                }
+                html += '</div>';
+            });
+        }
+        document.getElementById('visual-output').innerHTML = html;
+    })
+    .catch(err => {
+        hideLoading('Error', false);
+        document.getElementById('visual-output').innerHTML = '<div class="alert alert-error">Request failed: ' + err + '</div>';
+    });
+}
+
+// 2. Run Budget Suggester
+function runBudgetSuggester(e) {
+    e.preventDefault();
+    const dest = document.getElementById('budget-dest').value.trim();
+    const days = document.getElementById('budget-days').value;
+
+    showLoading('Estimating Budget for ' + dest);
+
+    fetch('/ai/budget/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ destination: dest, days: days })
+    })
+    .then(r => r.json())
+    .then(data => {
+        hideLoading('200 OK', true);
+        renderJson(data);
+
+        let html = '<div style="background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">';
+        html += '<h3 style="font-size: 1.15rem; font-weight: 700; color: #166534;">💰 ' + data.destination + ' Budget Estimate</h3>';
+        html += '<div style="font-size: 1.8rem; font-weight: 800; color: #166534; margin: 0.3rem 0;">₹' + data.estimated_total_budget + ' <span style="font-size: 0.9rem; font-weight: normal; color: #15803d;">(₹' + data.daily_average + '/day for ' + data.days + ' days)</span></div>';
+        html += '</div>';
+
+        if (data.breakdown) {
+            html += '<h4 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.5rem;">Recommended Breakdown (₹):</h4>';
+            html += '<ul style="list-style: none; font-size: 0.88rem; display: flex; flex-direction: column; gap: 0.4rem;">';
+            html += '<li style="background: #f8fafc; padding: 0.5rem; border-radius: 4px; border: 1px solid var(--border); display: flex; justify-content: space-between;"><span>🏨 Accommodation:</span> <strong>₹' + data.breakdown.accommodation + '</strong></li>';
+            html += '<li style="background: #f8fafc; padding: 0.5rem; border-radius: 4px; border: 1px solid var(--border); display: flex; justify-content: space-between;"><span>🍲 Food & Dining:</span> <strong>₹' + data.breakdown.food_and_dining + '</strong></li>';
+            html += '<li style="background: #f8fafc; padding: 0.5rem; border-radius: 4px; border: 1px solid var(--border); display: flex; justify-content: space-between;"><span>🎟️ Activities & Darshan:</span> <strong>₹' + data.breakdown.activities_and_tours + '</strong></li>';
+            html += '<li style="background: #f8fafc; padding: 0.5rem; border-radius: 4px; border: 1px solid var(--border); display: flex; justify-content: space-between;"><span>🚆 Transport:</span> <strong>₹' + data.breakdown.local_transport + '</strong></li>';
+            html += '</ul>';
+        }
+        document.getElementById('visual-output').innerHTML = html;
+    })
+    .catch(err => {
+        hideLoading('Error', false);
+        document.getElementById('visual-output').innerHTML = '<div class="alert alert-error">Request failed: ' + err + '</div>';
+    });
+}
+
+// 3. Run Activity Recommender
+function runActivityRecommender(e) {
+    e.preventDefault();
+    const city = document.getElementById('act-city').value.trim();
+
+    showLoading('Finding Places in ' + city);
+
+    fetch('/ai/activities/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ city: city })
+    })
+    .then(r => r.json())
+    .then(data => {
+        hideLoading('200 OK', true);
+        renderJson(data);
+
+        let html = '<div style="margin-bottom: 1rem;">';
+        html += '<h3 style="font-size: 1.15rem; font-weight: 700; color: #0f172a;">📍 Top Places & Activities in ' + (data.city || city) + '</h3>';
+        html += '</div>';
+
+        if (data.activities && Array.isArray(data.activities)) {
+            html += '<div style="display: flex; flex-direction: column; gap: 0.6rem;">';
+            data.activities.forEach(a => {
+                html += '<div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 6px; padding: 0.75rem;">';
+                html += '<div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.2rem;">';
+                html += '<strong style="color: #0f172a;">' + a.name + '</strong>';
+                html += '<span class="badge tag-' + (a.category || 'sightseeing') + '">' + (a.category || 'sightseeing') + '</span>';
+                html += '</div>';
+                html += '<div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.3rem;">⏱️ ' + (a.duration || '2 hours') + ' &bull; <strong style="color: var(--primary);">₹' + (a.estimated_cost || 200) + '</strong></div>';
+                html += '<p style="font-size: 0.82rem; color: #475569;">' + (a.description || '') + '</p>';
+                html += '</div>';
+            });
+            html += '</div>';
+        }
+        document.getElementById('visual-output').innerHTML = html;
+    })
+    .catch(err => {
+        hideLoading('Error', false);
+        document.getElementById('visual-output').innerHTML = '<div class="alert alert-error">Request failed: ' + err + '</div>';
+    });
+}
+</script>
+{% endblock %}

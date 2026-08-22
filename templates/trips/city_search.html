@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}City &amp; Destination Search - GlobeTrotter{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">🔍 Search Any Destination with AI</h1>
+        <p class="page-subtitle">Search any place or city worldwide (e.g., Dwarka, Somnath, Varanasi, Manali, Goa, Tokyo, Paris...)</p>
+    </div>
+    <a href="{% url 'start_trip' %}" class="btn btn-primary">+ Plan New Multi-City Trip</a>
+</div>
+
+<!-- Search Bar -->
+<div class="card" style="padding: 1.25rem;">
+    <form method="GET" action="{% url 'city_search' %}" style="display: flex; gap: 0.75rem;">
+        <input type="text" name="q" value="{{ query }}" placeholder="Type any place or city (e.g. Dwarka, Somnath, Manali, Kedarnath, Paris)..." style="flex: 1;" required>
+        <button type="submit" class="btn btn-primary">Search Destinations</button>
+        {% if query %}
+            <a href="{% url 'city_search' %}" class="btn btn-secondary">Clear</a>
+        {% endif %}
+    </form>
+</div>
+
+<!-- Results Grid -->
+{% if cities %}
+    <div class="grid grid-cols-3" style="margin-top: 1.5rem;">
+        {% for c in cities %}
+            <div class="card" style="margin-bottom: 0;">
+                <h3 style="font-weight: 700; font-size: 1.15rem; color: #0f172a; margin-bottom: 0.3rem;">📍 {{ c.name }}</h3>
+                <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 0.75rem;">{{ c.country }}</p>
+                <div style="display: flex; gap: 0.5rem; border-top: 1px solid var(--border); padding-top: 0.75rem; margin-top: 0.75rem;">
+                    <a href="{% url 'activity_search' %}?city={{ c.name }}" class="btn btn-secondary btn-sm" style="flex: 1;">Explore Activities</a>
+                    <a href="{% url 'start_trip' %}?city_query={{ c.name }}" class="btn btn-primary btn-sm" style="flex: 1;">Plan Trip</a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% elif query %}
+    <div class="card" style="text-align: center; padding: 2rem;">
+        <p style="color: var(--text-muted);">No destinations found for "{{ query }}". Try searching for places like Dwarka, Somnath, Varanasi, or Manali.</p>
+    </div>
+{% else %}
+    <div class="card" style="text-align: center; padding: 2rem;">
+        <p style="color: var(--text-muted);">Enter a place name above to fetch destinations dynamically using AI.</p>
+    </div>
+{% endif %}
+{% endblock %}

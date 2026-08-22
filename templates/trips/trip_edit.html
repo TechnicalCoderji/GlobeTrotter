@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Trip: {{ trip.name }} - GlobeTrotter{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Edit Trip: {{ trip.name }}</h1>
+        <p class="page-subtitle">Update your travel name, timeframe, and budget goals</p>
+    </div>
+    <a href="{% url 'itinerary_builder' trip.id %}" class="btn btn-secondary">&larr; Back to Builder</a>
+</div>
+
+<div class="container container-narrow">
+    <div class="card">
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label>Trip Name *</label>
+                <input type="text" name="name" value="{{ trip.name }}" required>
+            </div>
+
+            <div class="grid grid-cols-2" style="gap: 0.75rem;">
+                <div class="form-group">
+                    <label>Start Date *</label>
+                    <input type="date" name="start_date" value="{{ trip.start_date|date:'Y-m-d' }}" required>
+                </div>
+                <div class="form-group">
+                    <label>End Date *</label>
+                    <input type="date" name="end_date" value="{{ trip.end_date|date:'Y-m-d' }}" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Target Budget (₹ INR) *</label>
+                <input type="number" name="budget" value="{{ trip.estimated_budget }}" step="500" min="0" required>
+            </div>
+
+            <div class="form-group">
+                <label>Trip Description</label>
+                <textarea name="description" rows="3">{{ trip.description }}</textarea>
+            </div>
+
+            <div class="form-group" style="background: #f8fafc; padding: 0.75rem; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                <label class="checkbox-label">
+                    <input type="checkbox" name="is_public" {% if trip.is_public %}checked{% endif %}>
+                    <span><strong>Share Publicly in Community:</strong> Allow other travelers to view and clone your trip.</span>
+                </label>
+            </div>
+
+            <div style="display: flex; gap: 0.75rem; margin-top: 1.25rem;">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+                <a href="{% url 'itinerary_builder' trip.id %}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+
+{% block title %}Step 1: Trip Details & Destinations - GlobeTrotter{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">🗺️ Step 1: Trip Details &amp; Destinations</h1>
+        <p class="page-subtitle">Set your journey timeframe, target budget (in ₹), and add your personalized destinations via AI</p>
+    </div>
+    <a href="{% url 'home' %}" class="btn btn-secondary">&larr; Back to Dashboard</a>
+</div>
+
+<div class="grid grid-cols-3" style="align-items: start;">
+    <!-- Left 2 Cols: Main Form -->
+    <div class="card" style="grid-column: span 2;">
+        
+        <!-- Basic Trip Info -->
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="save_dates">
+
+            <div class="form-group">
+                <label for="trip_name">Trip Name *</label>
+                <input type="text" id="trip_name" name="name" value="{{ trip_draft.name }}" placeholder="e.g., Gujarat Pilgrimage: Dwarka &amp; Somnath" required>
+            </div>
+
+            <div class="grid grid-cols-3" style="gap: 0.75rem;">
+                <div class="form-group">
+                    <label for="start_date">Start Date *</label>
+                    <input type="date" id="start_date" name="start_date" value="{{ trip_draft.start_date }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="end_date">End Date *</label>
+                    <input type="date" id="end_date" name="end_date" value="{{ trip_draft.end_date }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="budget">Target Budget (₹ INR) *</label>
+                    <input type="number" id="budget" name="budget" value="{{ trip_draft.budget|default:'15000' }}" step="500" min="1000" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Trip Description / Travel Notes</label>
+                <textarea id="description" name="description" rows="2" placeholder="e.g., Spiritual family journey covering coastal temples and darshans...">{{ trip_draft.description }}</textarea>
+            </div>
+
+            <div class="form-group" style="background: #f8fafc; padding: 0.6rem 0.85rem; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                <label class="checkbox-label" style="font-size: 0.9rem;">
+                    <input type="checkbox" name="is_public" {% if trip_draft.is_public %}checked{% endif %}>
+                    <span><strong>Share Publicly in Community:</strong> Allow other travelers to view and copy your itinerary.</span>
+                </label>
+            </div>
+
+            <button type="submit" class="btn btn-secondary btn-sm">Save Trip Details</button>
+        </form>
+
+        <hr style="margin: 1.5rem 0; border: none; border-top: 1px solid var(--border);">
+
+        <!-- Dynamic AI Destination Search -->
+        <h3 style="font-size: 1.15rem; font-weight: 700; color: #0f172a; margin-bottom: 0.4rem;">
+            🔍 Search &amp; Add Any Destination via AI
+        </h3>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+            Type any place across India or the world (e.g. <em>Dwarka, Somnath, Varanasi, Manali, Kedarnath, Goa, Paris...</em>):
+        </p>
+
+        <form method="GET" style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+            <input type="text" name="city_query" value="{{ query }}" placeholder="Type city or place name (e.g. Dwarka, Somnath)" style="flex: 1;" required>
+            <button type="submit" class="btn btn-primary">Search with AI</button>
+        </form>
+
+        <!-- Search Results -->
+        {% if search_results %}
+            <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: var(--radius-sm); padding: 0.85rem; margin-bottom: 1.25rem;">
+                <h4 style="font-size: 0.9rem; font-weight: 700; color: #166534; margin-bottom: 0.5rem;">AI Destination Suggestions:</h4>
+                <div style="display: flex; flex-direction: column; gap: 0.4rem;">
+                    {% for item in search_results %}
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: white; padding: 0.5rem 0.75rem; border-radius: 4px; border: 1px solid #dcfce7;">
+                            <span style="font-weight: 600; color: #0f172a; font-size: 0.9rem;">📍 {{ item.display_name }}</span>
+                            <form method="POST" style="margin: 0;">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="add_city">
+                                <input type="hidden" name="city_name" value="{{ item.display_name }}">
+                                <button type="submit" class="btn btn-success btn-sm">+ Add to Trip</button>
+                            </form>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+
+        <!-- Quick Suggestions for One-Click Add -->
+        <div style="margin-bottom: 1.25rem;">
+            <span style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted);">Quick Add Popular Places:</span>
+            <div style="display: flex; gap: 0.4rem; flex-wrap: wrap; margin-top: 0.35rem;">
+                {% for quick_place in "Dwarka, Gujarat|Somnath, Gujarat|Varanasi, UP|Manali, HP|Goa, India|Ayodhya, UP|Rishikesh, UK"|slice:":100"|cut:" "|split:"|" %}
+                {% endfor %}
+                <button type="button" class="btn btn-secondary btn-sm" onclick="quickAddCity('Dwarka, Gujarat')">+ Dwarka</button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="quickAddCity('Somnath, Gujarat')">+ Somnath</button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="quickAddCity('Varanasi, UP')">+ Varanasi</button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="quickAddCity('Manali, HP')">+ Manali</button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="quickAddCity('Goa, India')">+ Goa</button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="quickAddCity('Ayodhya, UP')">+ Ayodhya</button>
+            </div>
+        </div>
+
+        <!-- Selected Destinations List -->
+        <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 1rem; margin-bottom: 1.5rem;">
+            <h3 style="font-size: 1.05rem; font-weight: 700; color: #0f172a; margin-bottom: 0.5rem;">
+                Selected Stops &amp; Destinations ({{ trip_draft.cities|length }})
+            </h3>
+            
+            {% if trip_draft.cities %}
+                <div style="display: flex; flex-direction: column; gap: 0.4rem;">
+                    {% for city in trip_draft.cities %}
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: white; padding: 0.5rem 0.75rem; border-radius: 4px; border: 1px solid var(--border);">
+                            <span style="font-weight: 600; color: #0f172a;">
+                                🛑 Stop {{ forloop.counter }}: <strong>{{ city }}</strong>
+                            </span>
+                            <form method="POST" style="margin: 0;">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="remove_city">
+                                <input type="hidden" name="city_name" value="{{ city }}">
+                                <button type="submit" class="btn btn-danger btn-sm" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;">Remove</button>
+                            </form>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p style="color: var(--text-muted); font-size: 0.88rem; font-style: italic;">
+                    No destinations added yet. Search above or click quick add to add stops.
+                </p>
+            {% endif %}
+        </div>
+
+        <!-- Next Step Action -->
+        <div>
+            {% if trip_draft.cities and trip_draft.start_date and trip_draft.end_date %}
+                <a href="{% url 'step2_events' %}" class="btn btn-primary btn-lg btn-block">
+                    ⚡ Next: Pick Activities with AI for Each Stop &rarr;
+                </a>
+            {% else %}
+                <button type="button" class="btn btn-secondary btn-lg btn-block" onclick="alert('Please fill Trip Name, Start Date, End Date, and add at least 1 destination above!');">
+                    Next: Pick Activities with AI (Please complete dates &amp; destinations)
+                </button>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Right Column: Flow Info -->
+    <div>
+        <div class="card" style="background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%); border-color: #c4b5fd;">
+            <h3 style="font-size: 1.1rem; font-weight: 700; color: #5b21b6; margin-bottom: 0.5rem;">🤖 How GlobeTrotter AI Works</h3>
+            <ol style="font-size: 0.85rem; color: #6d28d9; padding-left: 1.2rem; line-height: 1.5; display: flex; flex-direction: column; gap: 0.5rem;">
+                <li><strong>Add Any Place:</strong> Enter multi-city stops (e.g. Dwarka, then Somnath).</li>
+                <li><strong>AI Fetches Real Data:</strong> In Step 2, AI queries real temple darshans, food, and sightseeing in each stop with costs in ₹ Rupees.</li>
+                <li><strong>Select &amp; Customize:</strong> Pick your preferred activities or add custom ones.</li>
+                <li><strong>Instant Itinerary &amp; Budget:</strong> AI generates structured day-by-day plan with budget analysis.</li>
+            </ol>
+        </div>
+    </div>
+</div>
+
+<form id="quick-add-form" method="POST" style="display: none;">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="add_city">
+    <input type="hidden" name="city_name" id="quick-city-input">
+</form>
+
+<script>
+function quickAddCity(name) {
+    document.getElementById('quick-city-input').value = name;
+    document.getElementById('quick-add-form').submit();
+}
+</script>
+{% endblock %}

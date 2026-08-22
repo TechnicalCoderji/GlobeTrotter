@@ -1,0 +1,41 @@
+<div class="card" style="margin-bottom: 0; display: flex; flex-direction: column; justify-content: space-between;">
+    <div>
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.3rem;">
+            <h4 style="font-weight: 700; font-size: 1.15rem; color: #0f172a;">{{ trip.name }}</h4>
+            <span class="badge {% if trip.status == 'Ongoing' %}badge-success{% elif trip.status == 'Upcoming' %}badge-primary{% else %}badge-muted{% endif %}">
+                {{ trip.status }}
+            </span>
+        </div>
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 0.4rem;">
+            📍 {{ trip.destination_display }}
+        </p>
+        <p style="font-size: 0.85rem; color: #475569; margin-bottom: 0.6rem;">
+            📅 {{ trip.start_date|date:"M d" }} &ndash; {{ trip.end_date|date:"M d, Y" }} ({{ trip.duration_days }} Days)
+        </p>
+        {% if trip.description %}
+            <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 0.6rem; line-height: 1.35;">
+                {{ trip.description|truncatewords:14 }}
+            </p>
+        {% endif %}
+    </div>
+
+    <div style="font-size: 0.82rem; color: #334155; margin-top: auto; padding-top: 0.5rem; border-top: 1px dashed var(--border);">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+            <span>Activities: <strong>{{ trip.total_activities }}</strong></span>
+            <span>Cost: <strong {% if trip.is_overbudget %}style="color: var(--danger);"{% endif %}>₹{{ trip.total_cost }}</strong> / ₹{{ trip.estimated_budget }}</span>
+        </div>
+        <div class="progress-bar-bg" style="margin: 0.3rem 0 0.5rem;">
+            <div class="progress-bar-fill {% if trip.is_overbudget %}overbudget{% endif %}" style="width: {{ trip.budget_progress_percentage }}%;"></div>
+        </div>
+        <div style="display: flex; gap: 0.4rem; margin-top: 0.5rem;">
+            <a href="{% url 'itinerary_builder' trip.id %}" class="btn btn-primary btn-sm" style="flex: 1;">Builder</a>
+            <a href="{% url 'trip_calendar' trip.id %}" class="btn btn-secondary btn-sm" title="Calendar">📅</a>
+            <a href="{% url 'trip_budget' trip.id %}" class="btn btn-secondary btn-sm" title="Budget">💰</a>
+            <a href="{% url 'trip_export_json' trip.id %}" class="btn btn-secondary btn-sm" title="JSON">📥</a>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; padding-top: 0.4rem; margin-top: 0.3rem;">
+            <a href="{% url 'trip_edit' trip.id %}" style="color: #475569;">✏️ Edit</a>
+            <a href="{% url 'trip_delete' trip.id %}" style="color: var(--danger);">🗑️ Delete</a>
+        </div>
+    </div>
+</div>

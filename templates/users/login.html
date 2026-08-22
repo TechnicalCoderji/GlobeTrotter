@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Login - GlobeTrotter{% endblock %}
+
+{% block content %}
+<div class="container container-narrow" style="margin-top: 2rem;">
+    <div class="card">
+        <div class="card-header" style="text-align: center; display: block;">
+            <h2 class="card-title">Welcome to GlobeTrotter</h2>
+            <p class="page-subtitle">Log in to manage your personalized travel itineraries</p>
+        </div>
+
+        <form method="POST" action="{% url 'login' %}">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="id_username">Username</label>
+                {{ form.username }}
+            </div>
+
+            <div class="form-group">
+                <label for="id_password">Password</label>
+                {{ form.password }}
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+                <label class="checkbox-label" style="margin: 0;">
+                    <input type="checkbox" name="remember"> Remember me
+                </label>
+                <a href="#" onclick="alert('Demo notice: For test accounts, default password is Traveler123! or create a new account.'); return false;" style="font-size: 0.85rem;">Forgot password?</a>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block btn-lg">Log In</button>
+        </form>
+
+        <div style="text-align: center; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border);">
+            <p style="font-size: 0.95rem; color: var(--text-muted);">
+                Don't have an account? <a href="{% url 'signup' %}" style="font-weight: 600;">Sign up now</a>
+            </p>
+            <div style="margin-top: 0.75rem; background: #f8fafc; padding: 0.6rem; border-radius: 6px; font-size: 0.85rem; color: #64748b;">
+                💡 <strong>Demo Account:</strong> <code>traveler_alex</code> / <code>Traveler123!</code>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

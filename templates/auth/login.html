@@ -1,24 +1,36 @@
 {% extends "base.html" %}
 
+{% block title %}Login - GlobeTrotter{% endblock %}
+
 {% block content %}
+<div class="container container-narrow" style="margin-top: 2rem;">
+    <div class="card">
+        <div class="card-header" style="text-align: center; display: block;">
+            <h2 class="card-title">Welcome to GlobeTrotter</h2>
+            <p class="page-subtitle">Log in to manage your personalized travel itineraries</p>
+        </div>
 
-<h2>Login</h2>
+        <form method="POST">
+            {% csrf_token %}
 
-<form method="POST">
-    {% csrf_token %}
+            <div class="form-group">
+                <label for="id_username">Username</label>
+                {{ form.username }}
+            </div>
 
-    <label>Username</label>
-    <input type="text" name="username" required>
+            <div class="form-group">
+                <label for="id_password">Password</label>
+                {{ form.password }}
+            </div>
 
-    <label>Password</label>
-    <input type="password" name="password" required>
+            <button type="submit" class="btn btn-primary btn-block btn-lg" style="margin-top: 1rem;">Log In</button>
+        </form>
 
-    {% if form.errors %}
-    <div class="error">Invalid credentials</div>
-    {% endif %}
-
-    <button type="submit">Login</button>
-</form>
-
-<p>Don't have an account? <a href="{% url 'register' %}">Register</a></p>
+        <div style="text-align: center; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border);">
+            <p style="font-size: 0.95rem; color: var(--text-muted);">
+                Don't have an account? <a href="{% url 'register' %}" style="font-weight: 600;">Register here</a>
+            </p>
+        </div>
+    </div>
+</div>
 {% endblock %}

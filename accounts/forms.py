@@ -19,8 +19,8 @@ class RegisterForm(UserCreationForm):
     )
     phone_number = forms.CharField(
         max_length=20, 
-        required=True, 
-        widget=forms.TextInput(attrs={'placeholder': 'Phone Number', 'class': 'form-input'})
+        required=False, 
+        widget=forms.TextInput(attrs={'placeholder': 'Phone Number (optional)', 'class': 'form-input'})
     )
     city = forms.CharField(
         max_length=100, 
@@ -31,6 +31,10 @@ class RegisterForm(UserCreationForm):
         max_length=100, 
         required=False, 
         widget=forms.TextInput(attrs={'placeholder': 'Country', 'class': 'form-input'})
+    )
+    bio = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={'placeholder': 'Travel Bio & Interests...', 'rows': 3, 'class': 'form-input'})
     )
 
     class Meta:
@@ -43,6 +47,7 @@ class RegisterForm(UserCreationForm):
             'phone_number', 
             'city', 
             'country', 
+            'bio',
             'password1', 
             'password2'
         ]
@@ -59,13 +64,16 @@ class RegisterForm(UserCreationForm):
             raise forms.ValidationError("An account with this email address already exists.")
         return email
 
-    def clean_phone_number(self):
-        phone_number = self.cleaned_data.get('phone_number')
-        if phone_number and CustomUser.objects.filter(phone_number=phone_number).exists():
-            raise forms.ValidationError("An account with this phone number already exists.")
-        return phone_number
-
 
 class LoginForm(AuthenticationForm):
-    username = forms.CharField()
-    password = forms.CharField(widget=forms.PasswordInput)
+    username = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Username', 'class': 'form-input', 'autofocus': True}))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Password', 'class': 'form-input'}))
+
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = ['first_name', 'last_name', 'email', 'phone_number', 'city', 'country', 'bio']
+        widgets = {
+            'bio': forms.Textarea(attrs={'rows': 3, 'class': 'form-input'}),
+        }

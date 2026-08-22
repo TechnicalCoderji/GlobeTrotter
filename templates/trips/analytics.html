@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}Platform Analytics - GlobeTrotter{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">📊 Platform Analytics &amp; Trends</h1>
+        <p class="page-subtitle">Overview of traveler adoption, multi-city journeys, and platform metrics</p>
+    </div>
+</div>
+
+<!-- Metrics Cards -->
+<div class="grid grid-cols-4" style="margin-bottom: 2rem;">
+    <div class="card" style="margin-bottom: 0;">
+        <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">Total Trips Planned</div>
+        <div style="font-size: 2rem; font-weight: 800; color: #0f172a; margin-top: 0.2rem;">{{ total_trips }}</div>
+        <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.2rem;">Personalized multi-city journeys</div>
+    </div>
+
+    <div class="card" style="margin-bottom: 0;">
+        <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">Public Itineraries</div>
+        <div style="font-size: 2rem; font-weight: 800; color: #16a34a; margin-top: 0.2rem;">{{ public_trips }}</div>
+        <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.2rem;">Community shared</div>
+    </div>
+
+    <div class="card" style="margin-bottom: 0;">
+        <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">Total City Stops Planned</div>
+        <div style="font-size: 2rem; font-weight: 800; color: var(--primary); margin-top: 0.2rem;">{{ total_stops }}</div>
+        <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.2rem;">Dynamic destination stops</div>
+    </div>
+
+    <div class="card" style="margin-bottom: 0;">
+        <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">Activities Scheduled</div>
+        <div style="font-size: 2rem; font-weight: 800; color: #7c3aed; margin-top: 0.2rem;">{{ total_activities }}</div>
+        <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.2rem;">Temples, sightseeing, food</div>
+    </div>
+</div>
+
+<div class="grid grid-cols-2" style="align-items: start;">
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Top Destinations Planned</h3>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+            {% for c in popular_stops %}
+                <div>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.95rem; margin-bottom: 0.3rem;">
+                        <strong>📍 {{ c.city_name }}</strong>
+                        <span style="color: var(--primary); font-weight: 700;">{{ c.cnt }} stops</span>
+                    </div>
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar-fill" style="width: {% widthratio c.cnt total_stops 100 %}%;"></div>
+                    </div>
+                </div>
+            {% empty %}
+                <p style="color: var(--text-muted); font-size: 0.9rem;">No stops planned yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">AI Engine Status</h3>
+        </div>
+        <div style="font-size: 0.9rem; line-height: 1.6; color: #334155;">
+            <p>⚡ <strong>Model:</strong> Dynamic AI Engine / Pollinations / OpenRouter</p>
+            <p>💰 <strong>Currency Standard:</strong> Indian Rupees (₹ / INR)</p>
+            <p>🎯 <strong>Coverage:</strong> Any custom destination across India &amp; Worldwide</p>
+            <p>🔄 <strong>Multi-City:</strong> Dynamic stop-by-stop sequencing with activity assignment</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

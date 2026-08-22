@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Delete Trip - GlobeTrotter{% endblock %}
+
+{% block content %}
+<div class="container container-narrow" style="margin-top: 2rem;">
+    <div class="card" style="border-top: 4px solid var(--danger);">
+        <div class="card-header">
+            <h2 class="card-title" style="color: var(--danger);">Confirm Trip Deletion</h2>
+        </div>
+
+        <p style="font-size: 1rem; margin-bottom: 1rem;">
+            Are you sure you want to delete the trip: <strong>"{{ trip.name }}"</strong> ({{ trip.destination_display }})?
+        </p>
+
+        <div style="background: #fef2f2; padding: 1rem; border-radius: var(--radius-sm); border: 1px solid #fecaca; margin-bottom: 1.5rem; font-size: 0.9rem; color: #991b1b;">
+            ⚠️ This will permanently remove all {{ trip.itineraries.count }} days and {{ trip.total_activities }} planned activity items for this trip.
+        </div>
+
+        <form method="POST">
+            {% csrf_token %}
+            <div style="display: flex; gap: 0.75rem;">
+                <button type="submit" class="btn btn-danger">Yes, Delete Trip</button>
+                <a href="{% url 'itinerary_builder' trip.id %}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

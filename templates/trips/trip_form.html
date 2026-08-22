@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title %}{{ action_title }} - GlobeTrotter{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">{{ action_title }}</h1>
+        <p class="page-subtitle">Set up your journey timeframe, destination, and budget goals</p>
+    </div>
+    <a href="{% url 'trip_list' %}" class="btn btn-secondary">&larr; Back to Trips</a>
+</div>
+
+<div class="grid grid-cols-3" style="align-items: start;">
+    <!-- Form Card -->
+    <div class="card" style="grid-column: span 2;">
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="id_title">Trip Title *</label>
+                {{ form.title }}
+                <p class="form-help">e.g., Summer in Tokyo &amp; Kyoto, Romantic Weekend in Paris, Egyptian Wonders Tour</p>
+            </div>
+
+            <div class="grid grid-cols-2" style="gap: 0.75rem;">
+                <div class="form-group">
+                    <label for="id_destination_city">Select a Destination City (Database)</label>
+                    {{ form.destination_city }}
+                    <p class="form-help">Choose from pre-loaded cities for instant local activities</p>
+                </div>
+                <div class="form-group">
+                    <label for="id_destination_name">Or Enter Any Custom Destination</label>
+                    {{ form.destination_name }}
+                    <p class="form-help">Type any city or region across the globe</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2" style="gap: 0.75rem;">
+                <div class="form-group">
+                    <label for="id_start_date">Start Date *</label>
+                    {{ form.start_date }}
+                </div>
+                <div class="form-group">
+                    <label for="id_end_date">End Date *</label>
+                    {{ form.end_date }}
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2" style="gap: 0.75rem;">
+                <div class="form-group">
+                    <label for="id_budget">Estimated Budget ($ USD) *</label>
+                    {{ form.budget }}
+                </div>
+                <div class="form-group">
+                    <label for="id_cover_image">Cover Photo Image URL</label>
+                    {{ form.cover_image }}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="id_description">Trip Description &amp; Goals</label>
+                {{ form.description }}
+            </div>
+
+            <div class="form-group" style="background: #f8fafc; padding: 0.75rem 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                <label class="checkbox-label">
+                    {{ form.is_public }}
+                    <span><strong>Share Publicly in Community:</strong> Allow other travelers to view and copy your itinerary.</span>
+                </label>
+            </div>
+
+            {% if not trip %}
+            <!-- AI Auto-Generate Itinerary Option upon creation -->
+            <div class="form-group" style="background: #f5f3ff; border: 1px solid #ddd6fe; padding: 0.85rem 1rem; border-radius: var(--radius-sm);">
+                <label class="checkbox-label" style="color: #6d28d9;">
+                    <input type="checkbox" name="auto_generate_ai" value="true" checked>
+                    <span>⚡ <strong>AI Auto-Planner:</strong> Automatically generate and populate day-by-day activities using AI on save!</span>
+                </label>
+            </div>
+            {% endif %}
+
+            <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem;">
+                <button type="submit" class="btn btn-primary btn-lg">Save &amp; Open Itinerary Builder &rarr;</button>
+                <a href="{% url 'trip_list' %}" class="btn btn-secondary btn-lg">Cancel</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Right Column: Destination Inspiration / Quick Select (Screen 4 Wireframe) -->
+    <div>
+        <div class="card">
+            <h3 class="card-title" style="font-size: 1.1rem; margin-bottom: 0.75rem;">Suggestions &amp; Destinations</h3>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Click any popular city to quickly auto-fill your trip destination:</p>
+
+            <div style="display: flex; flex-direction: column; gap: 0.6rem;">
+                {% for c in popular_cities %}
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem; background: #f8fafc; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                        <div>
+                            <strong style="font-size: 0.9rem; color: #0f172a;">{{ c.name }}</strong>
+                            <span style="font-size: 0.78rem; color: var(--text-muted);">({{ c.country }})</span>
+                        </div>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="selectCity('{{ c.id }}', '{{ c.name }}, {{ c.country }}')">Select</button>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="card" style="background: #eff6ff; border-color: #bfdbfe;">
+            <h4 style="font-weight: 700; color: #1d4ed8; font-size: 0.95rem; margin-bottom: 0.4rem;">💡 Pro Tip</h4>
+            <p style="font-size: 0.85rem; color: #1e40af; line-height: 1.4;">
+                Once created, you can customize day-by-day stops, add custom or pre-loaded activities, review visual calendars, and inspect automated budget breakdowns.
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+function selectCity(cityId, cityName) {
+    const citySelect = document.getElementById('id_destination_city');
+    const titleInput = document.getElementById('id_title');
+    if (citySelect) {
+        citySelect.value = cityId;
+    }
+    if (titleInput && !titleInput.value) {
+        titleInput.value = 'Trip to ' + cityName;
+    }
+}
+</script>
+{% endblock %}

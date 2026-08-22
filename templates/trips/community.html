@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}Community Trips - GlobeTrotter{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">🌍 GlobeTrotter Traveler Community</h1>
+        <p class="page-subtitle">Explore public itineraries shared by fellow travelers. Get inspired or copy them into your account!</p>
+    </div>
+    {% if user.is_authenticated %}
+        <a href="{% url 'start_trip' %}" class="btn btn-primary">+ Share a New Journey</a>
+    {% else %}
+        <a href="{% url 'register' %}" class="btn btn-primary">Join Community</a>
+    {% endif %}
+</div>
+
+<!-- Search Bar -->
+<div class="card" style="padding: 1rem 1.25rem; margin-bottom: 1.5rem;">
+    <form method="GET" action="{% url 'community' %}" style="display: flex; gap: 0.75rem;">
+        <input type="text" name="q" value="{{ query }}" placeholder="Search community itineraries by place (e.g. Dwarka, Somnath, Varanasi, Goa) or creator..." style="flex: 1;">
+        <button type="submit" class="btn btn-primary">Search</button>
+        {% if query %}
+            <a href="{% url 'community' %}" class="btn btn-secondary">Clear</a>
+        {% endif %}
+    </form>
+</div>
+
+<!-- Public Trips Feed -->
+<div style="display: flex; flex-direction: column; gap: 1.5rem;">
+    {% for trip in public_trips %}
+        <div class="card" style="margin-bottom: 0; padding: 1.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+                <div style="flex: 1; min-width: 280px;">
+                    <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.4rem;">
+                        <span class="badge badge-success">Public</span>
+                        <h2 style="font-size: 1.3rem; font-weight: 700; color: #0f172a;">
+                            <a href="{% url 'trip_detail' trip.id %}" style="color: inherit;">{{ trip.name }}</a>
+                        </h2>
+                    </div>
+                    
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.6rem;">
+                        <span class="user-avatar-badge" style="width: 24px; height: 24px; font-size: 0.75rem;">{{ trip.user.avatar_letter }}</span>
+                        <span style="font-size: 0.88rem; color: var(--text-muted);">
+                            By <strong>@{{ trip.user.username }}</strong> &bull; 📍 <strong>{{ trip.destination_display }}</strong> &bull; ⏱️ <strong>{{ trip.duration_days }} Days</strong>
+                        </span>
+                    </div>
+
+                    {% if trip.description %}
+                        <p style="font-size: 0.9rem; color: #475569; line-height: 1.45; margin-bottom: 0.85rem;">
+                            {{ trip.description }}
+                        </p>
+                    {% endif %}
+
+                    <!-- Day Highlights pills -->
+                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.85rem;">
+                        {% for itin in trip.itineraries.all %}
+                            <span style="background: #f1f5f9; color: #334155; padding: 0.25rem 0.6rem; border-radius: 4px; font-size: 0.8rem;">
+                                <strong>Day {{ itin.day_number }}:</strong> {{ itin.title|default:"Activities" }} ({{ itin.items.count }} stops)
+                            </span>
+                        {% endfor %}
+                    </div>
+
+                    <div style="display: flex; gap: 1.5rem; font-size: 0.88rem; color: #334155;">
+                        <span>Activities: <strong>{{ trip.total_activities }}</strong></span>
+                        <span>Estimated Cost: <strong style="color: var(--primary);">₹{{ trip.total_cost }}</strong></span>
+                        <span>Target Budget: <strong>₹{{ trip.estimated_budget }}</strong></span>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div style="display: flex; flex-direction: column; gap: 0.5rem; min-width: 180px;">
+                    <a href="{% url 'trip_detail' trip.id %}" class="btn btn-secondary btn-block">Inspect Itinerary</a>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'trip_copy' trip.id %}" class="btn btn-primary btn-block">📋 Copy to My Trips</a>
+                    {% else %}
+                        <a href="{% url 'login' %}?next={% url 'community' %}" class="btn btn-primary btn-block">Login to Copy</a>
+                    {% endif %}
+                    <a href="{% url 'trip_calendar' trip.id %}" class="btn btn-secondary btn-sm btn-block">📅 Calendar</a>
+                    <a href="{% url 'trip_export_json' trip.id %}" class="btn btn-secondary btn-sm btn-block">📥 Export JSON</a>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <div class="card" style="text-align: center; padding: 3rem;">
+            <div style="font-size: 3rem; margin-bottom: 0.5rem;">🌍</div>
+            <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem;">No public itineraries found.</h3>
+            <p style="color: var(--text-muted); margin-bottom: 1.25rem;">Be the first traveler to publish a public itinerary to the GlobeTrotter community!</p>
+            {% if user.is_authenticated %}
+                <a href="{% url 'start_trip' %}" class="btn btn-primary">+ Create &amp; Share Trip</a>
+            {% endif %}
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}
