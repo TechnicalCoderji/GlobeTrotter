@@ -1,21 +1,202 @@
 {% extends "base.html" %}
 
+{% block title %}GlobeTrotter - Travel Dashboard{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="/static/css/home.css">
+{% endblock %}
+
 {% block content %}
 
-<div class="dashboard">
-
-    <h1>Welcome, {{ user.name|default:user.username }} 👋</h1>
-
-    <p>You are successfully logged in.</p>
-
-    <div class="user-info">
-        <p><strong>Username:</strong> {{ user.username }}</p>
-        <p><strong>Email:</strong> {{ user.email }}</p>
+<div class="app-container">
+  <!-- Navbar -->
+  <header class="navbar">
+    <a href="#" class="brand-logo">
+      <i class="fa-solid fa-earth-americas"></i> GLOBETROTTER
+    </a>
+    
+    <div class="search-bar">
+      <i class="fa-solid fa-magnifying-glass" style="color: var(--text-muted);"></i>
+      <input type="text" placeholder="Search destinations, activities..." />
     </div>
 
-    <div class="actions">
-        <a href="{% url 'logout' %}" class="btn logout-btn">Logout</a>
-    </div>
+    <ul class="nav-links">
+      <li><a href="#">Community</a></li>
+      <li><a href="#" class="active">My Trips</a></li>
+      <li>
+        <div class="account">
+          <div class="profile-circle"></div>
+          <a href="#">{{ user.username|default:"User" }} <i class="fa-solid fa-chevron-down" style="font-size: 0.7rem;"></i></a>
+        </div>
+      </li>
+      {% if user.is_authenticated %}
+        <li><a href="{% url 'logout' %}">Logout</a></li>
+      {% endif %}
+    </ul>
+  </header>
 
+  <!-- Banner -->
+  <div class="banner-container">
+    <div class="hero-banner">
+      <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80" alt="Scenic Background" />
+      <h1>Explore & Plan Your Next Adventure</h1>
+    </div>
+  </div>
+
+  <!-- Main Content Area -->
+  <main class="dashboard-layout">
+    <!-- 1. Left Sidebar Navigation -->
+    <aside class="card sidebar-menu">
+      <a href="#" class="menu-item active">
+        <i class="fa-solid fa-table-columns"></i>
+        <span>Trips</span>
+      </a>
+      <a href="#" class="menu-item">
+        <i class="fa-solid fa-compass"></i>
+        <span>Explore</span>
+      </a>
+      <a href="#" class="menu-item">
+        <i class="fa-solid fa-user-group"></i>
+        <span>Friends</span>
+      </a>
+      <a href="#" class="menu-item">
+        <i class="fa-solid fa-map-location-dot"></i>
+        <span>Map</span>
+      </a>
+      <a href="#" class="menu-item">
+        <i class="fa-solid fa-note-sticky"></i>
+        <span>Notes</span>
+      </a>
+    </aside>
+
+    <!-- 2. Maps & Quick View -->
+    <section class="map-column">
+      <div class="card map-preview">
+        <span class="tag-badge">Paris – Rome – Athens</span>
+        <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=600&q=80" alt="Route Map" />
+      </div>
+
+      <div class="card">
+        <div class="section-header" style="margin-bottom: 6px;">
+          <span style="font-size: 0.85rem; font-weight: 600;">Trip Friends</span>
+          <a href="#" style="font-size: 0.75rem; color: var(--primary-blue); text-decoration: none;">Share all</a>
+        </div>
+        <div class="friends-list">
+          <div class="avatar-group">
+            <img src="https://i.pravatar.cc/100?img=33" alt="Friend 1" />
+            <img src="https://i.pravatar.cc/100?img=12" alt="Friend 2" />
+            <img src="https://i.pravatar.cc/100?img=47" alt="Friend 3" />
+          </div>
+          <button class="btn btn-outline" style="padding: 4px 8px; font-size: 0.75rem;">
+            <i class="fa-solid fa-share-nodes"></i> Share
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Itinerary / Timeline Center -->
+    <section class="card itinerary-column">
+      <div class="section-header">
+        <div>
+          <div class="section-title">MY EUROPE TRIP</div>
+          <div style="font-size: 0.75rem; color: var(--text-muted);">June 15 – 28, 2026</div>
+        </div>
+        <div class="btn-group">
+          <button class="btn btn-outline"><i class="fa-solid fa-floppy-disk"></i> Save</button>
+          <button class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add Stop</button>
+        </div>
+      </div>
+
+      <!-- Stop 1: Paris -->
+      <div class="stop-card">
+        <div class="stop-header blue">
+          <span><i class="fa-solid fa-location-dot"></i> Paris, France</span>
+          <span>4 days</span>
+        </div>
+        <div class="stop-content">
+          <div>
+            <div class="detail-item"><i class="fa-solid fa-plane-departure"></i> Flight: 1:50 PM</div>
+            <div class="detail-item"><i class="fa-solid fa-hotel"></i> Grand Hotel Paris</div>
+          </div>
+          <div class="activity-preview">
+            <img src="https://images.unsplash.com/photo-1511739001486-6bfe10ce785f?auto=format&fit=crop&w=150&q=80" alt="Eiffel Tower" />
+            <div>
+              <strong style="font-size: 0.8rem; display: block;">Eiffel Tower</strong>
+              <span style="font-size: 0.75rem; color: var(--text-muted);">Guided tour</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stop 2: Rome -->
+      <div class="stop-card">
+        <div class="stop-header green">
+          <span><i class="fa-solid fa-location-dot"></i> Rome, Italy</span>
+          <span>4 days</span>
+        </div>
+        <div class="stop-content">
+          <div>
+            <div class="detail-item"><i class="fa-solid fa-train"></i> Express Train: 10:15 AM</div>
+            <div class="detail-item"><i class="fa-solid fa-hotel"></i> Colosseum Suites</div>
+          </div>
+          <div class="activity-preview">
+            <img src="https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&w=150&q=80" alt="Colosseum" />
+            <div>
+              <strong style="font-size: 0.8rem; display: block;">Colosseum</strong>
+              <span style="font-size: 0.75rem; color: var(--text-muted);">Historical pass</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Footer -->
+      <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: auto;">
+        <button class="btn btn-green"><i class="fa-solid fa-share-nodes"></i> Share</button>
+        <button class="btn btn-outline"><i class="fa-solid fa-plus"></i> Add Stop</button>
+        <button class="btn btn-primary">View Details</button>
+      </div>
+    </section>
+
+    <!-- 4. Budget & Recommendations Right Sidebar -->
+    <aside class="side-panel">
+      <!-- Budget Estimation -->
+      <div class="card">
+        <span style="font-size: 0.85rem; font-weight: 600;">Budget & Logistics</span>
+        <div class="budget-value">$3,450</div>
+        
+        <div class="budget-item">
+          <span style="color: var(--text-muted);"><i class="fa-solid fa-circle" style="color: #38bdf8; font-size: 0.5rem;"></i> Flights</span>
+          <strong>$900</strong>
+        </div>
+        <div class="budget-item">
+          <span style="color: var(--text-muted);"><i class="fa-solid fa-circle" style="color: #34d399; font-size: 0.5rem;"></i> Hotels</span>
+          <strong>$1,500</strong>
+        </div>
+        <div class="budget-item">
+          <span style="color: var(--text-muted);"><i class="fa-solid fa-circle" style="color: #818cf8; font-size: 0.5rem;"></i> Activities</span>
+          <strong>$600</strong>
+        </div>
+        <div class="budget-item">
+          <span style="color: var(--text-muted);"><i class="fa-solid fa-circle" style="color: #fb923c; font-size: 0.5rem;"></i> Food</span>
+          <strong>$450</strong>
+        </div>
+      </div>
+
+      <!-- Add Stops & Discoveries -->
+      <div class="card">
+        <span style="font-size: 0.85rem; font-weight: 600;">Add Stops & Activities</span>
+        <div class="activity-suggestion-grid">
+          <div class="suggestion-card">
+            <img src="https://images.unsplash.com/photo-1565099824688-e93eb20fe527?auto=format&fit=crop&w=300&q=80" alt="Louvre" />
+            <span>Louvre</span>
+          </div>
+          <div class="suggestion-card">
+            <img src="https://images.unsplash.com/photo-1531572753322-ad063cecc140?auto=format&fit=crop&w=300&q=80" alt="Vatican" />
+            <span>Vatican</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </main>
 </div>
 {% endblock %}

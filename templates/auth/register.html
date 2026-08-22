@@ -1,36 +1,151 @@
 {% extends "base.html" %}
 
+{% block title %}Register - GlobeTrotter{% endblock %}
+
 {% block content %}
+<div class="auth-wrapper register-mode">
+  <div class="auth-header">
+    <a href="{% url 'home' %}" class="brand-logo">
+      <i class="fa-solid fa-earth-americas"></i> GLOBETROTTER
+    </a>
+    <h2>Start your journey</h2>
+    <p>Create an account to plan, budget, and share your trips</p>
+  </div>
 
-<h2>Register</h2>
+  <div class="auth-body">
+    {% if form.non_field_errors %}
+      <div class="alert alert-danger">
+        {% for error in form.non_field_errors %}
+          <p>{{ error }}</p>
+        {% endfor %}
+      </div>
+    {% endif %}
 
-<form method="POST">
-    {% csrf_token %}
+    <form method="POST" action="{% url 'register' %}">
+      {% csrf_token %}
+      <div class="form-grid">
+        
+        <!-- First Name -->
+        <div class="form-group {% if form.first_name.errors %}has-error{% endif %}">
+          <label for="fname">First Name</label>
+          <div class="input-with-icon">
+            <i class="fa-solid fa-id-card"></i>
+            <input type="text" id="fname" name="first_name" value="{{ form.first_name.value|default:'' }}" placeholder="John" required />
+          </div>
+          {% if form.first_name.errors %}
+            <ul class="field-error">{% for error in form.first_name.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+          {% endif %}
+        </div>
 
-    <label>Full Name</label>
-    <input type="text" name="name" required>
+        <!-- Last Name -->
+        <div class="form-group {% if form.last_name.errors %}has-error{% endif %}">
+          <label for="lname">Last Name</label>
+          <div class="input-with-icon">
+            <i class="fa-solid fa-id-card"></i>
+            <input type="text" id="lname" name="last_name" value="{{ form.last_name.value|default:'' }}" placeholder="Doe" required />
+          </div>
+          {% if form.last_name.errors %}
+            <ul class="field-error">{% for error in form.last_name.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+          {% endif %}
+        </div>
 
-    <label>Username</label>
-    <input type="text" name="username" required>
+        <!-- Email -->
+        <div class="form-group full-width {% if form.email.errors %}has-error{% endif %}">
+          <label for="email">Email Address</label>
+          <div class="input-with-icon">
+            <i class="fa-solid fa-envelope"></i>
+            <input type="email" id="email" name="email" value="{{ form.email.value|default:'' }}" placeholder="john.doe@example.com" required />
+          </div>
+          {% if form.email.errors %}
+            <ul class="field-error">{% for error in form.email.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+          {% endif %}
+        </div>
 
-    <label>Email</label>
-    <input type="email" name="email" required>
+        <!-- Mobile -->
+        <div class="form-group full-width {% if form.phone_number.errors %}has-error{% endif %}">
+          <label for="mobile">Mobile Number</label>
+          <div class="input-with-icon">
+            <i class="fa-solid fa-phone"></i>
+            <input type="tel" id="mobile" name="phone_number" value="{{ form.phone_number.value|default:'' }}" placeholder="+1 (555) 000-0000" required />
+          </div>
+          {% if form.phone_number.errors %}
+            <ul class="field-error">{% for error in form.phone_number.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+          {% endif %}
+        </div>
 
-    <label>Password</label>
-    <input type="password" name="password1" required>
+        <!-- City -->
+        <div class="form-group {% if form.city.errors %}has-error{% endif %}">
+          <label for="city">City</label>
+          <div class="input-with-icon">
+            <i class="fa-solid fa-city"></i>
+            <input type="text" id="city" name="city" value="{{ form.city.value|default:'' }}" placeholder="e.g. San Francisco" required />
+          </div>
+          {% if form.city.errors %}
+            <ul class="field-error">{% for error in form.city.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+          {% endif %}
+        </div>
 
-    <label>Confirm Password</label>
-    <input type="password" name="password2" required>
+        <!-- Country -->
+        <div class="form-group {% if form.country.errors %}has-error{% endif %}">
+          <label for="country">Country</label>
+          <div class="input-with-icon">
+            <i class="fa-solid fa-globe"></i>
+            <input type="text" id="country" name="country" value="{{ form.country.value|default:'' }}" placeholder="e.g. United States" required />
+          </div>
+          {% if form.country.errors %}
+            <ul class="field-error">{% for error in form.country.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+          {% endif %}
+        </div>
 
-    {% for field in form %}
-    {% for error in field.errors %}
-    <div class="error">{{ error }}</div>
-    {% endfor %}
-    {% endfor %}
+        <!-- Username -->
+        <div class="form-group full-width {% if form.username.errors %}has-error{% endif %}">
+          <label for="reg-username">Username</label>
+          <div class="input-with-icon">
+            <i class="fa-solid fa-user"></i>
+            <input type="text" id="reg-username" name="username" value="{{ form.username.value|default:'' }}" placeholder="johndoe_travels" required />
+          </div>
+          {% if form.username.errors %}
+            <ul class="field-error">{% for error in form.username.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+          {% endif %}
+        </div>
 
-    <button type="submit">Register</button>
+        <!-- Password 1 -->
+        <div class="form-group {% if form.password1.errors %}has-error{% endif %}">
+          <label for="reg-password">Password</label>
+          <div class="input-with-icon">
+            <i class="fa-solid fa-lock"></i>
+            <input type="password" id="reg-password" name="password1" placeholder="••••••••" required />
+          </div>
+          {% if form.password1.errors %}
+            <ul class="field-error">{% for error in form.password1.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+          {% endif %}
+        </div>
 
-</form>
+        <!-- Password 2 -->
+        <div class="form-group {% if form.password2.errors %}has-error{% endif %}">
+          <label for="confirm-password">Confirm Password</label>
+          <div class="input-with-icon">
+            <i class="fa-solid fa-shield-halved"></i>
+            <input type="password" id="confirm-password" name="password2" placeholder="••••••••" required />
+          </div>
+          {% if form.password2.errors %}
+            <ul class="field-error">{% for error in form.password2.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+          {% endif %}
+        </div>
 
-<p>Already have an account? <a href="{% url 'login' %}">Login</a></p>
+      </div>
+
+      <div style="margin-top: 24px;">
+        <button type="submit" class="btn-submit">
+          <span>Create Account</span>
+          <i class="fa-solid fa-user-plus"></i>
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="auth-footer">
+    Already have an account? <a href="{% url 'login' %}">Log In</a>
+  </div>
+</div>
 {% endblock %}
