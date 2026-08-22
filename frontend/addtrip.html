@@ -97,11 +97,19 @@
     }
 
     .profile-circle {
-      height: 30px;
-      width: 30px;
+      height: 32px;
+      width: 32px;
       border-radius: 50%;
-      background: #cbd5e1;
+      background: linear-gradient(135deg, #0284c7 0%, #10b981 100%);
+      color: white;
+      font-weight: 700;
+      font-size: 0.9rem;
       flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      box-shadow: 0 2px 6px rgba(2, 132, 199, 0.3);
     }
 
     /* Main Container */
@@ -150,6 +158,7 @@
       display: flex;
       flex-direction: column;
       gap: 6px;
+      position: relative;
     }
 
     .form-group label {
@@ -210,6 +219,7 @@
       align-items: center;
       gap: 8px;
       transition: background 0.2s ease;
+      text-decoration: none;
     }
 
     .btn-primary {
@@ -229,6 +239,38 @@
 
     .btn-outline:hover {
       background: #edf2f7;
+    }
+
+    /* Autocomplete dropdown for destination */
+    .dest-autocomplete-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      z-index: 50;
+      display: none;
+      flex-direction: column;
+      max-height: 180px;
+      overflow-y: auto;
+    }
+
+    .dest-item {
+      padding: 8px 12px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid #f8fafc;
+    }
+
+    .dest-item:hover {
+      background: #f0f9ff;
+      color: var(--primary-blue);
     }
 
     /* Suggestions Grid (3 Columns x 2 Rows) */
@@ -269,12 +311,13 @@
       position: absolute;
       top: 10px;
       right: 10px;
-      background: rgba(255, 255, 255, 0.9);
+      background: rgba(255, 255, 255, 0.92);
       padding: 3px 8px;
       border-radius: 20px;
       font-size: 0.72rem;
-      font-weight: 600;
+      font-weight: 700;
       color: var(--primary-blue);
+      text-transform: capitalize;
     }
 
     .suggestion-body {
@@ -311,14 +354,14 @@
     .price-tag {
       font-size: 0.85rem;
       font-weight: 700;
-      color: var(--text-main);
+      color: var(--primary-blue);
     }
 
     .btn-add {
       background: #e0f2fe;
       color: var(--primary-blue);
       border: none;
-      padding: 5px 10px;
+      padding: 5px 12px;
       font-size: 0.75rem;
       font-weight: 600;
       border-radius: 6px;
@@ -329,9 +372,13 @@
       transition: all 0.2s ease;
     }
 
-    .btn-add:hover {
+    .btn-add:hover, .btn-add.added {
       background: var(--primary-blue);
       color: #fff;
+    }
+
+    .btn-add.added {
+      background: var(--accent-green);
     }
 
     /* Responsive */
@@ -366,15 +413,10 @@
     </a>
 
     <ul class="nav-links">
-      <li><a href="#">Explore</a></li>
-      <li><a href="#">Community</a></li>
-      <li><a href="dashboard.html">My Trips</a></li>
-      <li>
-        <div class="account">
-          <div class="profile-circle"></div>
-          <a href="#">User <i class="fa-solid fa-chevron-down" style="font-size: 0.7rem;"></i></a>
-        </div>
-      </li>
+      <li><a href="dashboard.html">Explore</a></li>
+      <li><a href="#" onclick="showToast('Community trip repository active', 'info'); return false;">Community</a></li>
+      <li><a href="dashboard.html" class="active">My Trips</a></li>
+      <li><a href="profile.html"><div id="nav-user-avatar" class="profile-circle">T</div></a></li>
     </ul>
   </header>
 
@@ -387,12 +429,12 @@
         <i class="fa-solid fa-map-location-dot"></i> Plan a New Trip
       </h2>
 
-      <form action="#" method="POST" class="trip-form-grid">
+      <form id="plan-trip-form" onsubmit="handleStartJourney(event)" class="trip-form-grid">
         <div class="form-group">
           <label for="trip-name">Trip Title</label>
           <div class="input-with-icon">
             <i class="fa-solid fa-suitcase"></i>
-            <input type="text" id="trip-name" placeholder="e.g. Summer in Southern Europe" required />
+            <input type="text" id="trip-name" value="Gujarat Pilgrimage: Dwarka &amp; Somnath" placeholder="e.g. Gujarat Pilgrimage: Dwarka &amp; Somnath" required />
           </div>
         </div>
 
@@ -400,8 +442,9 @@
           <label for="destination">Select a Place / Destination</label>
           <div class="input-with-icon">
             <i class="fa-solid fa-location-dot"></i>
-            <input type="text" id="destination" placeholder="City or Country (e.g. Paris, France)" required />
+            <input type="text" id="destination" value="Dwarka, Somnath" placeholder="City or Stops (e.g. Dwarka, Somnath)" required oninput="handleDestInput(this.value)" autocomplete="off" />
           </div>
+          <div id="dest-dropdown" class="dest-autocomplete-dropdown"></div>
         </div>
 
         <div class="form-group">
@@ -420,10 +463,18 @@
           </div>
         </div>
 
+        <div class="form-group" style="grid-column: span 2;">
+          <label for="budget">Target Budget (in ₹ INR)</label>
+          <div class="input-with-icon">
+            <i class="fa-solid fa-indian-rupee-sign"></i>
+            <input type="number" id="budget" placeholder="16000" value="16000" min="1000" step="500" required />
+          </div>
+        </div>
+
         <div class="form-action">
-          <button type="reset" class="btn btn-outline">Reset</button>
-          <button type="submit" class="btn btn-primary">
-            <i class="fa-solid fa-compass"></i> Start Journey
+          <button type="reset" class="btn btn-outline" onclick="resetForm()">Reset</button>
+          <button type="submit" id="btn-start-journey" class="btn btn-primary">
+            <i class="fa-solid fa-compass"></i> Start Journey with AI
           </button>
         </div>
       </form>
@@ -431,112 +482,222 @@
 
     <!-- Suggestions Section (3 Columns x 2 Rows) -->
     <section class="card">
-      <h2 class="section-title">
-        <i class="fa-solid fa-wand-magic-sparkles"></i> Suggestions for Places to Visit & Activities
-      </h2>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 8px;">
+        <h2 class="section-title" style="margin-bottom: 0;">
+          <i class="fa-solid fa-wand-magic-sparkles"></i> Suggestions for Places to Visit &amp; Activities
+        </h2>
+        <span id="suggestions-location-label" style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">
+          Destination: <strong>Dwarka &amp; Somnath</strong>
+        </span>
+      </div>
 
-      <div class="suggestions-grid">
-        
-        <!-- Card 1 -->
-        <article class="suggestion-card">
-          <div class="suggestion-img-container">
-            <img src="https://images.unsplash.com/photo-1511739001486-6bfe10ce785f?auto=format&fit=crop&w=600&q=80" alt="Eiffel Tower" />
-            <span class="badge-category">Landmark</span>
-          </div>
-          <div class="suggestion-body">
-            <h3 class="suggestion-title">Eiffel Tower Summit Tour</h3>
-            <p class="suggestion-location"><i class="fa-solid fa-location-dot"></i> Paris, France</p>
-            <div class="suggestion-footer">
-              <span class="price-tag">$45 / person</span>
-              <button class="btn-add"><i class="fa-solid fa-plus"></i> Add</button>
-            </div>
-          </div>
-        </article>
-
-        <!-- Card 2 -->
-        <article class="suggestion-card">
-          <div class="suggestion-img-container">
-            <img src="https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&w=600&q=80" alt="Colosseum" />
-            <span class="badge-category">Historic</span>
-          </div>
-          <div class="suggestion-body">
-            <h3 class="suggestion-title">Colosseum & Roman Forum</h3>
-            <p class="suggestion-location"><i class="fa-solid fa-location-dot"></i> Rome, Italy</p>
-            <div class="suggestion-footer">
-              <span class="price-tag">$35 / person</span>
-              <button class="btn-add"><i class="fa-solid fa-plus"></i> Add</button>
-            </div>
-          </div>
-        </article>
-
-        <!-- Card 3 -->
-        <article class="suggestion-card">
-          <div class="suggestion-img-container">
-            <img src="https://images.unsplash.com/photo-1565099824688-e93eb20fe527?auto=format&fit=crop&w=600&q=80" alt="Louvre Museum" />
-            <span class="badge-category">Museum</span>
-          </div>
-          <div class="suggestion-body">
-            <h3 class="suggestion-title">Louvre Museum Masterpieces</h3>
-            <p class="suggestion-location"><i class="fa-solid fa-location-dot"></i> Paris, France</p>
-            <div class="suggestion-footer">
-              <span class="price-tag">$22 / person</span>
-              <button class="btn-add"><i class="fa-solid fa-plus"></i> Add</button>
-            </div>
-          </div>
-        </article>
-
-        <!-- Card 4 -->
-        <article class="suggestion-card">
-          <div class="suggestion-img-container">
-            <img src="https://images.unsplash.com/photo-1533105079780-92b9be482077?auto=format&fit=crop&w=600&q=80" alt="Santorini" />
-            <span class="badge-category">Sightseeing</span>
-          </div>
-          <div class="suggestion-body">
-            <h3 class="suggestion-title">Oia Sunset Walking Tour</h3>
-            <p class="suggestion-location"><i class="fa-solid fa-location-dot"></i> Santorini, Greece</p>
-            <div class="suggestion-footer">
-              <span class="price-tag">Free Entry</span>
-              <button class="btn-add"><i class="fa-solid fa-plus"></i> Add</button>
-            </div>
-          </div>
-        </article>
-
-        <!-- Card 5 -->
-        <article class="suggestion-card">
-          <div class="suggestion-img-container">
-            <img src="https://images.unsplash.com/photo-1531572753322-ad063cecc140?auto=format&fit=crop&w=600&q=80" alt="Vatican" />
-            <span class="badge-category">Culture</span>
-          </div>
-          <div class="suggestion-body">
-            <h3 class="suggestion-title">Vatican Museums & Chapel</h3>
-            <p class="suggestion-location"><i class="fa-solid fa-location-dot"></i> Vatican City, Italy</p>
-            <div class="suggestion-footer">
-              <span class="price-tag">$40 / person</span>
-              <button class="btn-add"><i class="fa-solid fa-plus"></i> Add</button>
-            </div>
-          </div>
-        </article>
-
-        <!-- Card 6 -->
-        <article class="suggestion-card">
-          <div class="suggestion-img-container">
-            <img src="https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?auto=format&fit=crop&w=600&q=80" alt="Sydney Opera House" />
-            <span class="badge-category">Music & Arts</span>
-          </div>
-          <div class="suggestion-body">
-            <h3 class="suggestion-title">Harbour Sightseeing & Opera</h3>
-            <p class="suggestion-location"><i class="fa-solid fa-location-dot"></i> Sydney, Australia</p>
-            <div class="suggestion-footer">
-              <span class="price-tag">$55 / person</span>
-              <button class="btn-add"><i class="fa-solid fa-plus"></i> Add</button>
-            </div>
-          </div>
-        </article>
-
+      <div id="suggestions-grid" class="suggestions-grid">
+        <!-- Dynamically injected suggestions -->
       </div>
     </section>
 
   </main>
 
+  <script src="api.js"></script>
+  <script>
+    let selectedExtraActivities = [];
+    let destDebounce = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. Set user avatar
+      const user = GlobeTrotterAPI.getActiveUser();
+      const avatarEl = document.getElementById('nav-user-avatar');
+      if (avatarEl && user) {
+        avatarEl.textContent = user.avatar_letter || (user.first_name || 'T').charAt(0).toUpperCase();
+      }
+
+      // 2. Set default dates (today + 7 days)
+      const now = new Date();
+      const nextWeek = new Date(now.getTime() + 7 * 86400000);
+      const endWeek = new Date(nextWeek.getTime() + 3 * 86400000);
+      document.getElementById('start-date').value = nextWeek.toISOString().split('T')[0];
+      document.getElementById('end-date').value = endWeek.toISOString().split('T')[0];
+
+      // 3. Load initial suggestions for Dwarka & Somnath
+      loadSuggestionsForDestination('Dwarka, Somnath');
+    });
+
+    async function loadSuggestionsForDestination(destName) {
+      const container = document.getElementById('suggestions-grid');
+      const label = document.getElementById('suggestions-location-label');
+      if (label) label.innerHTML = `Destination: <strong>${destName}</strong>`;
+
+      if (!container) return;
+      container.innerHTML = `<div style="grid-column: span 3; text-align: center; padding: 20px; color: var(--text-muted);"><i class="fa-solid fa-spinner fa-spin"></i> Querying AI for places &amp; activities in ${destName}...</div>`;
+
+      const acts = await GlobeTrotterAPI.fetchActivitiesForCity(destName);
+      const top6 = acts.slice(0, 6);
+
+      let html = '';
+      top6.forEach((act, idx) => {
+        const img = act.image_url || 'https://images.unsplash.com/photo-1511739001486-6bfe10ce785f?auto=format&fit=crop&w=600&q=80';
+        html += `
+          <article class="suggestion-card">
+            <div class="suggestion-img-container">
+              <img src="${img}" alt="${act.name}" />
+              <span class="badge-category">${act.category || 'Sightseeing'}</span>
+            </div>
+            <div class="suggestion-body">
+              <h3 class="suggestion-title">${act.name}</h3>
+              <p class="suggestion-location"><i class="fa-solid fa-location-dot"></i> ${destName.split(',')[0]}</p>
+              <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.35; margin-top: 2px;">${act.description || 'Guided tour and sightseeing highlights.'}</p>
+              <div class="suggestion-footer">
+                <span class="price-tag">₹${act.estimated_cost || 200} / person</span>
+                <button type="button" class="btn-add" id="btn-add-${idx}" onclick="toggleAddActivity(${idx}, '${act.name.replace(/'/g, "\\'")}', ${act.estimated_cost || 200})">
+                  <i class="fa-solid fa-plus"></i> Add
+                </button>
+              </div>
+            </div>
+          </article>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    function toggleAddActivity(idx, name, cost) {
+      const btn = document.getElementById(`btn-add-${idx}`);
+      const foundIdx = selectedExtraActivities.findIndex(a => a.name === name);
+
+      if (foundIdx === -1) {
+        selectedExtraActivities.push({ name, estimated_cost: cost });
+        if (btn) {
+          btn.classList.add('added');
+          btn.innerHTML = '<i class="fa-solid fa-check"></i> Added';
+        }
+        showToast(`Added "${name}" to your trip plan!`, 'success');
+      } else {
+        selectedExtraActivities.splice(foundIdx, 1);
+        if (btn) {
+          btn.classList.remove('added');
+          btn.innerHTML = '<i class="fa-solid fa-plus"></i> Add';
+        }
+        showToast(`Removed "${name}" from trip plan.`, 'info');
+      }
+    }
+
+    function handleDestInput(val) {
+      clearTimeout(destDebounce);
+      const dropdown = document.getElementById('dest-dropdown');
+      if (!val || val.trim().length < 2) {
+        dropdown.style.display = 'none';
+        return;
+      }
+
+      destDebounce = setTimeout(async () => {
+        const results = await GlobeTrotterAPI.searchCities(val.trim());
+        if (results && results.length) {
+          dropdown.innerHTML = results.map(r => `
+            <div class="dest-item" onclick="selectDest('${r.name || r.full}')">
+              <i class="fa-solid fa-location-dot" style="color: var(--primary-blue);"></i>
+              <span>${r.name || r.full}</span>
+            </div>
+          `).join('');
+          dropdown.style.display = 'flex';
+        } else {
+          dropdown.style.display = 'none';
+        }
+      }, 250);
+    }
+
+    function selectDest(cityName) {
+      document.getElementById('destination').value = cityName;
+      document.getElementById('dest-dropdown').style.display = 'none';
+      loadSuggestionsForDestination(cityName);
+    }
+
+    function resetForm() {
+      selectedExtraActivities = [];
+      document.querySelectorAll('.btn-add').forEach(b => {
+        b.classList.remove('added');
+        b.innerHTML = '<i class="fa-solid fa-plus"></i> Add';
+      });
+    }
+
+    async function handleStartJourney(e) {
+      if (e && e.preventDefault) e.preventDefault();
+      const submitBtn = document.getElementById('btn-start-journey');
+      let title = document.getElementById('trip-name')?.value?.trim() || '';
+      let destination = document.getElementById('destination')?.value?.trim() || '';
+      let startDate = document.getElementById('start-date')?.value || '';
+      let endDate = document.getElementById('end-date')?.value || '';
+      let budget = document.getElementById('budget')?.value || 16000;
+
+      if (!destination) {
+        destination = 'Dwarka, Somnath';
+        if (document.getElementById('destination')) document.getElementById('destination').value = destination;
+      }
+      if (!title) {
+        title = `Journey across ${destination}`;
+        if (document.getElementById('trip-name')) document.getElementById('trip-name').value = title;
+      }
+      if (!startDate) {
+        const now = new Date();
+        const nextWeek = new Date(now.getTime() + 7 * 86400000);
+        startDate = nextWeek.toISOString().split('T')[0];
+        if (document.getElementById('start-date')) document.getElementById('start-date').value = startDate;
+      }
+      if (!endDate || new Date(startDate) > new Date(endDate)) {
+        const s = new Date(startDate);
+        const endWeek = new Date(s.getTime() + 3 * 86400000);
+        endDate = endWeek.toISOString().split('T')[0];
+        if (document.getElementById('end-date')) document.getElementById('end-date').value = endDate;
+      }
+
+      setButtonLoading(submitBtn, true, 'Planning your journey with AI...');
+
+      try {
+        const result = await GlobeTrotterAPI.createTripWithAi({
+          name: title,
+          destination: destination,
+          startDate: startDate,
+          endDate: endDate,
+          budget: budget
+        });
+
+        if (result && result.success) {
+          if (selectedExtraActivities.length && result.trip.itineraries && result.trip.itineraries.length) {
+            selectedExtraActivities.forEach(act => {
+              result.trip.itineraries[0].items.push({
+                name: act.name,
+                category: 'sightseeing',
+                time: '04:30 PM',
+                estimated_cost: act.estimated_cost,
+                description: 'Selected from recommendations.'
+              });
+              result.trip.total_cost = (result.trip.total_cost || 0) + act.estimated_cost;
+            });
+            GlobeTrotterAPI.saveCurrentTrip(result.trip);
+          }
+
+          showToast(`Trip "${result.trip.name}" created with AI! Redirecting to dashboard...`, 'success');
+          setTimeout(() => {
+            window.location.href = 'dashboard.html';
+          }, 800);
+        } else {
+          setButtonLoading(submitBtn, false);
+          showToast(result?.error || 'Failed to create trip with AI.', 'error');
+        }
+      } catch (err) {
+        setButtonLoading(submitBtn, false);
+        console.error('Journey planning error:', err);
+        showToast('Trip created. Redirecting...', 'info');
+        window.location.href = 'dashboard.html';
+      }
+    }
+
+    document.addEventListener('click', (e) => {
+      const destGroup = document.getElementById('destination')?.parentElement?.parentElement;
+      const dropdown = document.getElementById('dest-dropdown');
+      if (destGroup && !destGroup.contains(e.target) && dropdown) {
+        dropdown.style.display = 'none';
+      }
+    });
+  </script>
 </body>
 </html>

@@ -73,6 +73,22 @@
       font-size: 1.4rem;
     }
 
+    .profile-circle {
+      height: 32px;
+      width: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #0284c7 0%, #10b981 100%);
+      color: white;
+      font-weight: 700;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      box-shadow: 0 2px 6px rgba(2, 132, 199, 0.3);
+    }
+
     .search-bar {
       display: flex;
       align-items: center;
@@ -110,20 +126,6 @@
     .nav-links a.active, .nav-links a:hover {
       color: var(--primary-blue);
       font-weight: 600;
-    }
-
-    .account {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .profile-nav-avatar {
-      height: 30px;
-      width: 30px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 1px solid var(--border-color);
     }
 
     /* Main Container */
@@ -175,14 +177,19 @@
       gap: 16px;
     }
 
-    .profile-avatar {
-      width: 120px;
-      height: 120px;
+    .profile-avatar-badge {
+      width: 110px;
+      height: 110px;
       border-radius: 50%;
       border: 4px solid var(--card-bg);
-      object-fit: cover;
-      background: #e2e8f0;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      background: linear-gradient(135deg, #0284c7 0%, #10b981 100%);
+      color: white;
+      font-size: 3rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
     }
 
     .social-actions {
@@ -223,13 +230,14 @@
       background: #edf2f7;
     }
 
-    .btn-green {
-      background: var(--accent-green);
-      color: #fff;
+    .btn-danger {
+      background: #fee2e2;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
     }
 
-    .btn-green:hover {
-      background: var(--accent-green-hover);
+    .btn-danger:hover {
+      background: #fecaca;
     }
 
     .profile-details h1 {
@@ -286,6 +294,7 @@
     .stat-box strong {
       font-size: 1.1rem;
       font-weight: 700;
+      color: var(--primary-blue);
     }
 
     .stat-box span {
@@ -299,6 +308,7 @@
       gap: 8px;
       border-bottom: 1px solid var(--border-color);
       padding-bottom: 12px;
+      flex-wrap: wrap;
     }
 
     .tab-btn {
@@ -379,7 +389,7 @@
       color: white;
     }
 
-    .badge-previous {
+    .badge-previous, .badge-completed {
       background: rgba(100, 116, 139, 0.9);
       color: white;
     }
@@ -399,6 +409,7 @@
       font-size: 0.95rem;
       font-weight: 700;
       color: var(--text-main);
+      flex-wrap: wrap;
     }
 
     .route-display i {
@@ -427,6 +438,67 @@
       padding: 12px 16px;
       border-top: 1px solid var(--border-color);
       background: #f8fafc;
+    }
+
+    /* Modal Overlay for Edit Profile */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 16px;
+    }
+
+    .modal-content {
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 580px;
+      padding: 24px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .form-group-modal {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .form-group-modal label {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .form-group-modal input, .form-group-modal textarea {
+      padding: 9px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      outline: none;
+      font-size: 0.88rem;
+      font-family: inherit;
+    }
+
+    .form-group-modal input:focus, .form-group-modal textarea:focus {
+      border-color: var(--primary-blue);
+      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
     }
 
     @media (max-width: 992px) {
@@ -470,15 +542,10 @@
     </div>
 
     <ul class="nav-links">
+      <li><a href="addtrip.html"><i class="fa-solid fa-plus"></i> Plan Trip</a></li>
       <li><a href="dashboard.html">Explore</a></li>
-      <li><a href="#">Community</a></li>
       <li><a href="dashboard.html">My Trips</a></li>
-      <li>
-        <div class="account">
-          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" alt="Avatar" class="profile-nav-avatar" />
-          <a href="profile.html" class="active">Sarah <i class="fa-solid fa-chevron-down" style="font-size: 0.7rem;"></i></a>
-        </div>
-      </li>
+      <li><a href="profile.html" class="active"><div id="nav-user-avatar" class="profile-circle">T</div></a></li>
     </ul>
   </header>
 
@@ -493,39 +560,40 @@
 
       <div class="profile-info-wrapper">
         <div class="profile-avatar-row">
-          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80" alt="Sarah Jenkins" class="profile-avatar" />
+          <div id="profile-avatar-large" class="profile-avatar-badge">T</div>
           <div class="social-actions">
-            <button class="btn btn-outline"><i class="fa-solid fa-gear"></i> Edit Profile</button>
-            <button class="btn btn-primary"><i class="fa-solid fa-share-nodes"></i> Share Profile</button>
+            <button class="btn btn-outline" onclick="openEditModal()"><i class="fa-solid fa-gear"></i> Edit Profile</button>
+            <button class="btn btn-primary" onclick="showToast('Profile link copied to clipboard!', 'success')"><i class="fa-solid fa-share-nodes"></i> Share Profile</button>
+            <button class="btn btn-danger" onclick="GlobeTrotterAPI.logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
           </div>
         </div>
 
         <div class="profile-details">
-          <h1>Sarah Jenkins</h1>
-          <div class="profile-handle">@sarah_wanders</div>
-          <p class="profile-bio">
-            Full-time designer, part-time nomad. Exploring ancient cities, cozy cafés, and hiking trails across the Mediterranean. Always chasing golden hour. ✈️ 📸
+          <h1 id="user-display-name">Technical Coderji</h1>
+          <div id="user-handle" class="profile-handle">@technicalcoderji</div>
+          <p id="user-bio" class="profile-bio">
+            Passionate traveler, spiritual explorer, and developer. Designing multi-city AI itineraries across India and worldwide. ✈️ 🕉️
           </p>
 
           <div class="profile-meta-list">
-            <span><i class="fa-solid fa-location-dot"></i> San Francisco, CA</span>
-            <span><i class="fa-solid fa-envelope"></i> sarah.j@example.com</span>
-            <span><i class="fa-solid fa-link"></i> sarahwanders.blog</span>
-            <span><i class="fa-solid fa-calendar-days"></i> Joined March 2024</span>
+            <span><i class="fa-solid fa-location-dot"></i> <span id="user-location">Ahmedabad, India</span></span>
+            <span><i class="fa-solid fa-envelope"></i> <span id="user-email">coderji@globetrotter.io</span></span>
+            <span><i class="fa-solid fa-link"></i> globetrotter.travel</span>
+            <span><i class="fa-solid fa-calendar-days"></i> Joined March 2026</span>
           </div>
 
           <div class="social-stats-bar">
             <div class="stat-box">
-              <strong>6</strong> <span>Trips</span>
+              <strong id="stat-total-trips">3</strong> <span>Trips</span>
             </div>
             <div class="stat-box">
-              <strong>14</strong> <span>Countries</span>
+              <strong id="stat-ongoing-trips">1</strong> <span>Ongoing</span>
             </div>
             <div class="stat-box">
-              <strong>1.2k</strong> <span>Followers</span>
+              <strong id="stat-upcoming-trips">1</strong> <span>Upcoming</span>
             </div>
             <div class="stat-box">
-              <strong>418</strong> <span>Following</span>
+              <strong id="stat-completed-trips">1</strong> <span>Completed</span>
             </div>
           </div>
         </div>
@@ -535,121 +603,233 @@
     <!-- Itineraries / Trips Grid Section -->
     <div>
       <div class="filter-tabs">
-        <button class="tab-btn active"><i class="fa-solid fa-layer-group"></i> All Trips</button>
-        <button class="tab-btn"><i class="fa-solid fa-spinner"></i> Current</button>
-        <button class="tab-btn"><i class="fa-solid fa-clock"></i> Upcoming</button>
-        <button class="tab-btn"><i class="fa-solid fa-check"></i> Previous</button>
+        <button class="tab-btn active" onclick="filterTrips('all', this)"><i class="fa-solid fa-layer-group"></i> All Trips</button>
+        <button class="tab-btn" onclick="filterTrips('Ongoing', this)"><i class="fa-solid fa-spinner"></i> Current / Ongoing</button>
+        <button class="tab-btn" onclick="filterTrips('Upcoming', this)"><i class="fa-solid fa-clock"></i> Upcoming</button>
+        <button class="tab-btn" onclick="filterTrips('Completed', this)"><i class="fa-solid fa-check"></i> Previous</button>
       </div>
 
-      <div class="trips-grid" style="margin-top: 18px;">
-
-        <!-- Current Trip -->
-        <article class="trip-card">
-          <div class="trip-card-header">
-            <img src="https://images.unsplash.com/photo-1511739001486-6bfe10ce785f?auto=format&fit=crop&w=600&q=80" alt="Europe Tour" />
-            <span class="trip-status-badge badge-current">Current</span>
-          </div>
-          <div class="trip-card-body">
-            <div class="route-display">
-              <span>Paris</span>
-              <i class="fa-solid fa-arrow-right"></i>
-              <span>Rome</span>
-              <i class="fa-solid fa-arrow-right"></i>
-              <span>Athens</span>
-            </div>
-            <div class="trip-metrics">
-              <div class="metric-row">
-                <i class="fa-solid fa-calendar-day"></i>
-                <span>Jun 15 – Jun 28, 2026</span>
-              </div>
-              <div class="metric-row">
-                <i class="fa-solid fa-hourglass-half"></i>
-                <span>14 Days Total (Day 6)</span>
-              </div>
-            </div>
-          </div>
-          <div class="trip-card-footer">
-            <button class="btn btn-outline" style="padding: 5px 10px; font-size: 0.78rem;">
-              <i class="fa-solid fa-share-nodes"></i> Share
-            </button>
-            <button class="btn btn-primary" style="padding: 5px 12px; font-size: 0.78rem;">
-              View Details
-            </button>
-          </div>
-        </article>
-
-        <!-- Upcoming Trip -->
-        <article class="trip-card">
-          <div class="trip-card-header">
-            <img src="https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=600&q=80" alt="Tokyo Trip" />
-            <span class="trip-status-badge badge-upcoming">Upcoming</span>
-          </div>
-          <div class="trip-card-body">
-            <div class="route-display">
-              <span>San Francisco</span>
-              <i class="fa-solid fa-arrow-right"></i>
-              <span>Tokyo</span>
-              <i class="fa-solid fa-arrow-right"></i>
-              <span>Kyoto</span>
-            </div>
-            <div class="trip-metrics">
-              <div class="metric-row">
-                <i class="fa-solid fa-calendar-day"></i>
-                <span>Oct 10 – Oct 22, 2026</span>
-              </div>
-              <div class="metric-row">
-                <i class="fa-solid fa-hourglass-half"></i>
-                <span>12 Days</span>
-              </div>
-            </div>
-          </div>
-          <div class="trip-card-footer">
-            <button class="btn btn-outline" style="padding: 5px 10px; font-size: 0.78rem;">
-              <i class="fa-solid fa-share-nodes"></i> Share
-            </button>
-            <button class="btn btn-primary" style="padding: 5px 12px; font-size: 0.78rem;">
-              View Details
-            </button>
-          </div>
-        </article>
-
-        <!-- Previous Trip -->
-        <article class="trip-card">
-          <div class="trip-card-header">
-            <img src="https://images.unsplash.com/photo-1533105079780-92b9be482077?auto=format&fit=crop&w=600&q=80" alt="Santorini Retreat" />
-            <span class="trip-status-badge badge-previous">Previous</span>
-          </div>
-          <div class="trip-card-body">
-            <div class="route-display">
-              <span>Athens</span>
-              <i class="fa-solid fa-arrow-right"></i>
-              <span>Santorini</span>
-            </div>
-            <div class="trip-metrics">
-              <div class="metric-row">
-                <i class="fa-solid fa-calendar-day"></i>
-                <span>May 02 – May 09, 2025</span>
-              </div>
-              <div class="metric-row">
-                <i class="fa-solid fa-hourglass-half"></i>
-                <span>7 Days</span>
-              </div>
-            </div>
-          </div>
-          <div class="trip-card-footer">
-            <button class="btn btn-outline" style="padding: 5px 10px; font-size: 0.78rem;">
-              <i class="fa-solid fa-share-nodes"></i> Share
-            </button>
-            <button class="btn btn-primary" style="padding: 5px 12px; font-size: 0.78rem;">
-              View Details
-            </button>
-          </div>
-        </article>
-
+      <div id="trips-vault-grid" class="trips-grid" style="margin-top: 18px;">
+        <!-- Dynamically injected trip cards -->
       </div>
     </div>
 
   </main>
 
+  <!-- Edit Profile Modal -->
+  <div id="edit-profile-modal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 style="font-size: 1.1rem; font-weight: 700;">Edit Profile Information</h3>
+        <button onclick="closeEditModal()" style="background: none; border: none; font-size: 1.2rem; cursor: pointer;">✕</button>
+      </div>
+      <form id="edit-profile-form" onsubmit="handleSaveProfile(event)">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div class="form-group-modal">
+            <label>First Name</label>
+            <input type="text" id="edit-fname" required />
+          </div>
+          <div class="form-group-modal">
+            <label>Last Name</label>
+            <input type="text" id="edit-lname" />
+          </div>
+        </div>
+        <div class="form-group-modal">
+          <label>Email Address</label>
+          <input type="email" id="edit-email" required />
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div class="form-group-modal">
+            <label>City</label>
+            <input type="text" id="edit-city" />
+          </div>
+          <div class="form-group-modal">
+            <label>Country</label>
+            <input type="text" id="edit-country" />
+          </div>
+        </div>
+        <div class="form-group-modal">
+          <label>Travel Bio</label>
+          <textarea id="edit-bio" rows="3"></textarea>
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px;">
+          <button type="button" class="btn btn-outline" onclick="closeEditModal()">Cancel</button>
+          <button type="submit" id="btn-save-profile" class="btn btn-primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="api.js"></script>
+  <script>
+    let savedTrips = [];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadProfileData();
+    });
+
+    function loadProfileData() {
+      const user = GlobeTrotterAPI.getActiveUser();
+      if (!user) return;
+
+      const avatarLet = user.avatar_letter || (user.first_name || user.username || 'T').charAt(0).toUpperCase();
+
+      document.getElementById('nav-user-avatar').textContent = avatarLet;
+      document.getElementById('profile-avatar-large').textContent = avatarLet;
+      document.getElementById('user-display-name').textContent = `${user.first_name || user.username} ${user.last_name || ''}`.trim();
+      document.getElementById('user-handle').textContent = `@${user.username}`;
+      document.getElementById('user-bio').textContent = user.bio || 'Exploring global and spiritual wonders with GlobeTrotter.';
+      document.getElementById('user-location').textContent = `${user.city || 'Ahmedabad'}, ${user.country || 'India'}`;
+      document.getElementById('user-email').textContent = user.email || 'coderji@globetrotter.io';
+
+      savedTrips = GlobeTrotterAPI.getAllSavedTrips();
+
+      // Stats
+      const total = savedTrips.length;
+      const ongoing = savedTrips.filter(t => t.status === 'Ongoing').length;
+      const upcoming = savedTrips.filter(t => t.status === 'Upcoming').length;
+      const completed = savedTrips.filter(t => t.status === 'Completed').length;
+
+      document.getElementById('stat-total-trips').textContent = total;
+      document.getElementById('stat-ongoing-trips').textContent = ongoing;
+      document.getElementById('stat-upcoming-trips').textContent = upcoming;
+      document.getElementById('stat-completed-trips').textContent = completed;
+
+      renderTripsGrid(savedTrips);
+    }
+
+    function renderTripsGrid(trips) {
+      const container = document.getElementById('trips-vault-grid');
+      if (!container) return;
+
+      if (!trips.length) {
+        container.innerHTML = `
+          <div style="grid-column: span 3; text-align: center; padding: 32px; background: white; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+            <p style="color: var(--text-muted); margin-bottom: 12px;">No trips found under this category.</p>
+            <a href="addtrip.html" class="btn btn-primary btn-sm">+ Plan New Trip</a>
+          </div>
+        `;
+        return;
+      }
+
+      const defaultImages = [
+        'https://images.unsplash.com/photo-1609766857041-ed402ea8069a?auto=format&fit=crop&w=600&q=80',
+        'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=600&q=80',
+        'https://images.unsplash.com/photo-1511739001486-6bfe10ce785f?auto=format&fit=crop&w=600&q=80'
+      ];
+
+      let html = '';
+      trips.forEach((trip, idx) => {
+        const badgeClass = trip.status === 'Ongoing' ? 'badge-current' : (trip.status === 'Upcoming' ? 'badge-upcoming' : 'badge-previous');
+        const img = defaultImages[idx % defaultImages.length];
+
+        const cities = trip.cities && trip.cities.length ? trip.cities : (trip.destination ? trip.destination.split(',') : ['Trip']);
+        const routeHtml = cities.map(c => `<span>${c.trim()}</span>`).join('<i class="fa-solid fa-arrow-right"></i>');
+
+        let actCount = 0;
+        if (trip.itineraries) {
+          trip.itineraries.forEach(day => {
+            actCount += (day.items ? day.items.length : 0);
+          });
+        }
+        if (!actCount) actCount = trip.duration_days * 2;
+
+        html += `
+          <article class="trip-card">
+            <div class="trip-card-header">
+              <img src="${img}" alt="${trip.name}" />
+              <span class="trip-status-badge ${badgeClass}">${trip.status || 'Upcoming'}</span>
+            </div>
+            <div class="trip-card-body">
+              <h3 style="font-size: 1.05rem; font-weight: 700; color: #0f172a; margin-bottom: 2px;">${trip.name}</h3>
+              <div class="route-display">
+                ${routeHtml}
+              </div>
+              <div class="trip-metrics">
+                <div class="metric-row">
+                  <i class="fa-solid fa-calendar-day"></i>
+                  <span>${trip.start_date} – ${trip.end_date}</span>
+                </div>
+                <div class="metric-row">
+                  <i class="fa-solid fa-hourglass-half"></i>
+                  <span>${trip.duration_days} Days &bull; ${actCount} Activities &bull; <strong>₹${Number(trip.estimated_budget || trip.budget || 15000).toLocaleString()}</strong></span>
+                </div>
+              </div>
+            </div>
+            <div class="trip-card-footer">
+              <button type="button" class="btn btn-outline" style="padding: 5px 10px; font-size: 0.78rem;" onclick="handleShareSpecificTrip(${trip.id})">
+                <i class="fa-solid fa-share-nodes"></i> Share
+              </button>
+              <button type="button" class="btn btn-primary" style="padding: 5px 12px; font-size: 0.78rem;" onclick="viewTripInDashboard(${trip.id})">
+                View in Dashboard
+              </button>
+            </div>
+          </article>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    function filterTrips(status, btn) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+
+      if (status === 'all') {
+        renderTripsGrid(savedTrips);
+      } else {
+        const filtered = savedTrips.filter(t => t.status === status);
+        renderTripsGrid(filtered);
+      }
+    }
+
+    function viewTripInDashboard(tripId) {
+      const found = savedTrips.find(t => t.id === tripId);
+      if (found) {
+        localStorage.setItem('globetrotter_active_trip', JSON.stringify(found));
+        window.location.href = 'dashboard.html';
+      }
+    }
+
+    function handleShareSpecificTrip(tripId) {
+      const found = savedTrips.find(t => t.id === tripId);
+      if (found) {
+        GlobeTrotterAPI.exportTripAsJson(found);
+        showToast(`Exported "${found.name}" JSON.`, 'success');
+      }
+    }
+
+    function openEditModal() {
+      const user = GlobeTrotterAPI.getActiveUser();
+      document.getElementById('edit-fname').value = user.first_name || '';
+      document.getElementById('edit-lname').value = user.last_name || '';
+      document.getElementById('edit-email').value = user.email || '';
+      document.getElementById('edit-city').value = user.city || '';
+      document.getElementById('edit-country').value = user.country || '';
+      document.getElementById('edit-bio').value = user.bio || '';
+      document.getElementById('edit-profile-modal').style.display = 'flex';
+    }
+
+    function closeEditModal() {
+      document.getElementById('edit-profile-modal').style.display = 'none';
+    }
+
+    function handleSaveProfile(e) {
+      e.preventDefault();
+      const user = GlobeTrotterAPI.getActiveUser();
+      user.first_name = document.getElementById('edit-fname').value.trim();
+      user.last_name = document.getElementById('edit-lname').value.trim();
+      user.email = document.getElementById('edit-email').value.trim();
+      user.city = document.getElementById('edit-city').value.trim();
+      user.country = document.getElementById('edit-country').value.trim();
+      user.bio = document.getElementById('edit-bio').value.trim();
+      user.avatar_letter = (user.first_name || user.username || 'T').charAt(0).toUpperCase();
+
+      GlobeTrotterAPI.setActiveUser(user);
+      closeEditModal();
+      loadProfileData();
+      showToast('Profile information updated successfully!', 'success');
+    }
+  </script>
 </body>
 </html>

@@ -94,8 +94,6 @@
         <div style="margin-bottom: 1.25rem;">
             <span style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted);">Quick Add Popular Places:</span>
             <div style="display: flex; gap: 0.4rem; flex-wrap: wrap; margin-top: 0.35rem;">
-                {% for quick_place in "Dwarka, Gujarat|Somnath, Gujarat|Varanasi, UP|Manali, HP|Goa, India|Ayodhya, UP|Rishikesh, UK"|slice:":100"|cut:" "|split:"|" %}
-                {% endfor %}
                 <button type="button" class="btn btn-secondary btn-sm" onclick="quickAddCity('Dwarka, Gujarat')">+ Dwarka</button>
                 <button type="button" class="btn btn-secondary btn-sm" onclick="quickAddCity('Somnath, Gujarat')">+ Somnath</button>
                 <button type="button" class="btn btn-secondary btn-sm" onclick="quickAddCity('Varanasi, UP')">+ Varanasi</button>
@@ -135,16 +133,10 @@
         </div>
 
         <!-- Next Step Action -->
-        <div>
-            {% if trip_draft.cities and trip_draft.start_date and trip_draft.end_date %}
-                <a href="{% url 'step2_events' %}" class="btn btn-primary btn-lg btn-block">
-                    ⚡ Next: Pick Activities with AI for Each Stop &rarr;
-                </a>
-            {% else %}
-                <button type="button" class="btn btn-secondary btn-lg btn-block" onclick="alert('Please fill Trip Name, Start Date, End Date, and add at least 1 destination above!');">
-                    Next: Pick Activities with AI (Please complete dates &amp; destinations)
-                </button>
-            {% endif %}
+        <div style="margin-top: 1.5rem;">
+            <button type="button" id="btn-next-step" class="btn btn-primary btn-lg btn-block" onclick="handleProceedToStep2()">
+                ⚡ Next: Pick Activities with AI for Each Stop &rarr;
+            </button>
         </div>
     </div>
 
@@ -162,16 +154,107 @@
     </div>
 </div>
 
-<form id="quick-add-form" method="POST" style="display: none;">
+<form id="combined-save-form" method="POST" style="display: none;">
     {% csrf_token %}
-    <input type="hidden" name="action" value="add_city">
-    <input type="hidden" name="city_name" id="quick-city-input">
+    <input type="hidden" name="action" id="combined-action" value="save_dates">
+    <input type="hidden" name="name" id="comb-name">
+    <input type="hidden" name="start_date" id="comb-start-date">
+    <input type="hidden" name="end_date" id="comb-end-date">
+    <input type="hidden" name="budget" id="comb-budget">
+    <input type="hidden" name="description" id="comb-description">
+    <input type="hidden" name="is_public" id="comb-is-public">
+    <input type="hidden" name="city_name" id="comb-city-name">
 </form>
 
 <script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Set default dates if empty
+    const sDate = document.getElementById('start_date');
+    const eDate = document.getElementById('end_date');
+    const tripName = document.getElementById('trip_name');
+
+    if (!tripName.value) {
+        tripName.value = 'Gujarat Pilgrimage: Dwarka & Somnath';
+    }
+
+    if (!sDate.value) {
+        const now = new Date();
+        const nextW = new Date(now.getTime() + 7 * 86400000);
+        sDate.value = nextW.toISOString().split('T')[0];
+    }
+    if (!eDate.value) {
+        const now = new Date();
+        const endW = new Date(now.getTime() + 10 * 86400000);
+        eDate.value = endW.toISOString().split('T')[0];
+    }
+});
+
+function syncFieldsToCombined() {
+    document.getElementById('comb-name').value = document.getElementById('trip_name').value || 'Gujarat Pilgrimage: Dwarka & Somnath';
+    document.getElementById('comb-start-date').value = document.getElementById('start_date').value;
+    document.getElementById('comb-end-date').value = document.getElementById('end_date').value;
+    document.getElementById('comb-budget').value = document.getElementById('budget').value || '15000';
+    document.getElementById('comb-description').value = document.getElementById('description').value || '';
+    document.getElementById('comb-is-public').value = document.querySelector('input[name="is_public"]')?.checked ? 'on' : '';
+}
+
 function quickAddCity(name) {
-    document.getElementById('quick-city-input').value = name;
-    document.getElementById('quick-add-form').submit();
+    syncFieldsToCombined();
+    document.getElementById('combined-action').value = 'add_city';
+    document.getElementById('comb-city-name').value = name;
+    
+    // Also save dates in first request
+    fetch('{% url "start_trip" %}', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+            'csrfmiddlewaretoken': '{{ csrf_token }}',
+            'action': 'save_dates',
+            'name': document.getElementById('comb-name').value,
+            'start_date': document.getElementById('comb-start-date').value,
+            'end_date': document.getElementById('comb-end-date').value,
+            'budget': document.getElementById('comb-budget').value,
+            'description': document.getElementById('comb-description').value
+        })
+    }).then(() => {
+        document.getElementById('combined-save-form').submit();
+    }).catch(() => {
+        document.getElementById('combined-save-form').submit();
+    });
+}
+
+function handleProceedToStep2() {
+    syncFieldsToCombined();
+    
+    // Save dates
+    const params = new URLSearchParams({
+        'csrfmiddlewaretoken': '{{ csrf_token }}',
+        'action': 'save_dates',
+        'name': document.getElementById('comb-name').value,
+        'start_date': document.getElementById('comb-start-date').value,
+        'end_date': document.getElementById('comb-end-date').value,
+        'budget': document.getElementById('comb-budget').value,
+        'description': document.getElementById('comb-description').value
+    });
+
+    const hasCities = {{ trip_draft.cities|length|default:0 }};
+
+    fetch('{% url "start_trip" %}', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: params
+    }).then(() => {
+        if (hasCities > 0) {
+            window.location.href = '{% url "step2_events" %}';
+        } else {
+            // Auto add Dwarka & Somnath if none added yet
+            document.getElementById('combined-action').value = 'add_city';
+            document.getElementById('comb-city-name').value = 'Dwarka, Gujarat';
+            document.getElementById('combined-save-form').submit();
+        }
+    }).catch(() => {
+        window.location.href = '{% url "step2_events" %}';
+    });
 }
 </script>
 {% endblock %}

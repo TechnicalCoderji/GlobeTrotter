@@ -14,7 +14,7 @@
 
   <div class="auth-wrapper login-mode">
     <div class="auth-header">
-      <a href="#" class="brand-logo">
+      <a href="index.html" class="brand-logo">
         <i class="fa-solid fa-earth-americas"></i> GLOBETROTTER
       </a>
       <h2>Welcome back</h2>
@@ -22,13 +22,27 @@
     </div>
 
     <div class="auth-body">
-      <form action="#" method="POST">
+      <!-- Demo Account Quick Pill -->
+      <div class="demo-account-box">
+        <div>
+          <strong>Demo Account:</strong> <code>technicalcoderji</code>
+        </div>
+        <button type="button" class="demo-btn-autofill" onclick="autofillDemo()">Auto-Fill</button>
+      </div>
+
+      <!-- Alert placeholder -->
+      <div id="login-alert" style="display: none;" class="alert-box alert-error">
+        <i class="fa-solid fa-circle-exclamation"></i>
+        <span id="login-alert-msg">Invalid credentials.</span>
+      </div>
+
+      <form id="login-form" onsubmit="handleLogin(event)">
         <div class="form-grid single-col">
           <div class="form-group">
             <label for="username">Username</label>
             <div class="input-with-icon">
               <i class="fa-solid fa-user"></i>
-              <input type="text" id="username" name="username" placeholder="Enter your username" required />
+              <input type="text" id="username" name="username" placeholder="Enter your username" required autofocus />
             </div>
           </div>
 
@@ -43,12 +57,12 @@
 
         <div class="form-options">
           <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
-            <input type="checkbox" name="remember" /> Remember me
+            <input type="checkbox" name="remember" checked /> Remember me
           </label>
-          <a href="#">Forgot password?</a>
+          <a href="#" onclick="showToast('Password reset link will be sent to registered email.', 'info'); return false;">Forgot password?</a>
         </div>
 
-        <button type="submit" class="btn-submit">
+        <button type="submit" id="btn-login-submit" class="btn-submit">
           <span>Log In</span>
           <i class="fa-solid fa-arrow-right"></i>
         </button>
@@ -60,5 +74,46 @@
     </div>
   </div>
 
+  <script src="api.js"></script>
+  <script>
+    function autofillDemo() {
+      document.getElementById('username').value = 'technicalcoderji';
+      document.getElementById('password').value = 'Coderji123!';
+      showToast('Demo credentials filled: technicalcoderji / Coderji123!', 'info');
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      const alertBox = document.getElementById('login-alert');
+      const alertMsg = document.getElementById('login-alert-msg');
+      const submitBtn = document.getElementById('btn-login-submit');
+
+      alertBox.style.display = 'none';
+
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+
+      if (!username || !password) {
+        alertMsg.textContent = 'Please enter both username and password.';
+        alertBox.style.display = 'flex';
+        return;
+      }
+
+      setButtonLoading(submitBtn, true, 'Signing in...');
+
+      const result = await GlobeTrotterAPI.login(username, password);
+
+      if (result.success) {
+        showToast(`Welcome back, ${result.user.first_name || result.user.username}!`, 'success');
+        setTimeout(() => {
+          window.location.href = 'dashboard.html';
+        }, 600);
+      } else {
+        setButtonLoading(submitBtn, false);
+        alertMsg.textContent = result.error || 'Invalid username or password.';
+        alertBox.style.display = 'flex';
+      }
+    }
+  </script>
 </body>
 </html>

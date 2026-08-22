@@ -80,6 +80,7 @@
       width: 100%;
       max-width: 400px;
       gap: 10px;
+      position: relative;
     }
 
     .search-bar input {
@@ -88,6 +89,38 @@
       outline: none;
       width: 100%;
       font-size: 0.88rem;
+    }
+
+    .search-dropdown {
+      position: absolute;
+      top: 110%;
+      left: 0;
+      right: 0;
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      z-index: 100;
+      display: none;
+      flex-direction: column;
+      max-height: 220px;
+      overflow-y: auto;
+    }
+
+    .search-item {
+      padding: 10px 14px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid #f1f5f9;
+      transition: background 0.15s;
+    }
+
+    .search-item:hover {
+      background: #f0f9ff;
+      color: var(--primary-blue);
     }
 
     .nav-links {
@@ -118,11 +151,19 @@
     }
 
     .profile-circle {
-      height: 28px;
-      width: 28px;
+      height: 32px;
+      width: 32px;
       border-radius: 50%;
-      background: #cbd5e1;
+      background: linear-gradient(135deg, #0284c7 0%, #10b981 100%);
+      color: white;
+      font-weight: 700;
+      font-size: 0.9rem;
       flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      box-shadow: 0 2px 6px rgba(2, 132, 199, 0.3);
     }
 
     /* Main Viewport Container */
@@ -161,12 +202,21 @@
       opacity: 0.4;
     }
 
-    .hero-banner h1 {
+    .hero-banner-content {
       position: relative;
       color: white;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    }
+
+    .hero-banner h1 {
       font-size: clamp(1.2rem, 3vw, 1.8rem);
       font-weight: 700;
-      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    }
+
+    .hero-banner p {
+      font-size: 0.88rem;
+      opacity: 0.9;
+      margin-top: 4px;
     }
 
     /* 3. Responsive Dashboard Grid */
@@ -212,7 +262,7 @@
       font-size: 1.15rem;
     }
 
-    .menu-item.active {
+    .menu-item.active, .menu-item:hover {
       background: #e0f2fe;
       color: var(--primary-blue);
       font-weight: 600;
@@ -249,7 +299,12 @@
       border-radius: 20px;
       font-size: 0.72rem;
       font-weight: 600;
+      color: #0f172a;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      max-width: 90%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .friends-list {
@@ -263,12 +318,20 @@
       display: flex;
     }
 
-    .avatar-group img {
+    .avatar-group img, .avatar-group .mini-avatar {
       width: 32px;
       height: 32px;
       border-radius: 50%;
       border: 2px solid #ffffff;
       margin-right: -6px;
+      object-fit: cover;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: white;
+      background: var(--primary-blue);
     }
 
     /* Column 3: Itinerary Timeline */
@@ -289,6 +352,8 @@
     .section-title {
       font-size: 1.05rem;
       font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .btn-group {
@@ -308,7 +373,8 @@
       align-items: center;
       gap: 6px;
       white-space: nowrap;
-      transition: background 0.2s ease;
+      transition: all 0.2s ease;
+      text-decoration: none;
     }
 
     .btn-outline {
@@ -319,6 +385,7 @@
 
     .btn-outline:hover {
       background: #edf2f7;
+      border-color: #cbd5e1;
     }
 
     .btn-primary {
@@ -343,6 +410,13 @@
       border: 1px solid var(--border-color);
       border-radius: var(--radius-sm);
       overflow: hidden;
+      background: #ffffff;
+      margin-bottom: 12px;
+      transition: box-shadow 0.2s;
+    }
+
+    .stop-card:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     }
 
     .stop-header {
@@ -354,8 +428,9 @@
       font-size: 0.85rem;
     }
 
-    .stop-header.blue { background: #f0f9ff; color: var(--primary-blue); }
-    .stop-header.green { background: #f0fdf4; color: var(--accent-green); }
+    .stop-header.blue { background: #f0f9ff; color: var(--primary-blue); border-bottom: 1px solid #e0f2fe; }
+    .stop-header.green { background: #f0fdf4; color: var(--accent-green); border-bottom: 1px solid #dcfce7; }
+    .stop-header.amber { background: #fffbeb; color: #d97706; border-bottom: 1px solid #fef3c7; }
 
     .stop-content {
       padding: 12px;
@@ -422,6 +497,12 @@
       border-radius: 6px;
       overflow: hidden;
       height: 75px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .suggestion-card:hover {
+      transform: scale(1.03);
     }
 
     .suggestion-card img {
@@ -434,13 +515,17 @@
       position: absolute;
       bottom: 4px;
       left: 6px;
+      right: 6px;
       color: #fff;
       font-size: 0.72rem;
       font-weight: 600;
       text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
-    /* 4. Media Queries */
+    /* Media Queries */
     @media (max-width: 1200px) {
       .dashboard-layout {
         grid-template-columns: 70px 1fr 280px;
@@ -501,24 +586,21 @@
 
   <!-- Full-Width Navbar -->
   <header class="navbar">
-    <a href="#" class="brand-logo">
+    <a href="index.html" class="brand-logo">
       <i class="fa-solid fa-earth-americas"></i> GLOBETROTTER
     </a>
     
     <div class="search-bar">
       <i class="fa-solid fa-magnifying-glass" style="color: var(--text-muted);"></i>
-      <input type="text" placeholder="Search destinations, activities..." />
+      <input type="text" id="search-input" placeholder="Search destinations, activities..." oninput="handleSearchInput(this.value)" autocomplete="off" />
+      <div id="search-results-dropdown" class="search-dropdown"></div>
     </div>
 
     <ul class="nav-links">
-      <li><a href="#">Community</a></li>
-      <li><a href="#" class="active">My Trips</a></li>
-      <li>
-        <div class="account">
-          <div class="profile-circle"></div>
-          <a href="#">User <i class="fa-solid fa-chevron-down" style="font-size: 0.7rem;"></i></a>
-        </div>
-      </li>
+      <li><a href="addtrip.html"><i class="fa-solid fa-plus"></i> Plan Trip</a></li>
+      <li><a href="#" onclick="showToast('Browsing active traveler network', 'info'); return false;">Community</a></li>
+      <li><a href="dashboard.html" class="active">My Trips</a></li>
+      <li><a href="profile.html"><div id="nav-user-avatar" class="profile-circle">T</div></a></li>
     </ul>
   </header>
 
@@ -528,7 +610,10 @@
     <!-- Hero Banner -->
     <div class="hero-banner">
       <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1600&q=80" alt="Scenic Background" />
-      <h1>Explore & Plan Your Next Adventure</h1>
+      <div class="hero-banner-content">
+        <h1 id="hero-heading">Explore &amp; Plan Your Next Adventure</h1>
+        <p id="hero-subheading">Personalized multi-city itineraries generated with real-time AI &amp; transparent budgeting</p>
+      </div>
     </div>
 
     <!-- Dashboard Content Layout -->
@@ -536,39 +621,39 @@
       
       <!-- 1. Navigation Column -->
       <aside class="card sidebar-menu">
-        <a href="#" class="menu-item active">
+        <a href="dashboard.html" class="menu-item active">
           <i class="fa-solid fa-table-columns"></i>
           <span>Trips</span>
         </a>
-        <a href="#" class="menu-item">
+        <a href="addtrip.html" class="menu-item">
           <i class="fa-solid fa-compass"></i>
           <span>Explore</span>
         </a>
-        <a href="#" class="menu-item">
+        <a href="#" class="menu-item" onclick="showToast('Connected with 3 trip co-travelers.', 'info'); return false;">
           <i class="fa-solid fa-user-group"></i>
           <span>Friends</span>
         </a>
-        <a href="#" class="menu-item">
+        <a href="#" class="menu-item" onclick="showToast('Visual route map active for current itinerary.', 'info'); return false;">
           <i class="fa-solid fa-map-location-dot"></i>
           <span>Map</span>
         </a>
-        <a href="#" class="menu-item">
-          <i class="fa-solid fa-note-sticky"></i>
-          <span>Notes</span>
+        <a href="profile.html" class="menu-item">
+          <i class="fa-solid fa-user"></i>
+          <span>Profile</span>
         </a>
       </aside>
 
       <!-- 2. Map & Connections Column -->
       <section class="map-column">
         <div class="card map-preview">
-          <span class="tag-badge">Paris – Rome – Athens</span>
+          <span id="route-tag-badge" class="tag-badge">Dwarka – Somnath</span>
           <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=600&q=80" alt="Route Map" />
         </div>
 
         <div class="card">
           <div class="section-header" style="margin-bottom: 6px;">
             <span style="font-size: 0.85rem; font-weight: 600;">Trip Friends</span>
-            <a href="#" style="font-size: 0.75rem; color: var(--primary-blue); text-decoration: none;">Share all</a>
+            <a href="#" onclick="handleShareTrip(); return false;" style="font-size: 0.75rem; color: var(--primary-blue); text-decoration: none;">Share all</a>
           </div>
           <div class="friends-list">
             <div class="avatar-group">
@@ -576,7 +661,7 @@
               <img src="https://i.pravatar.cc/100?img=12" alt="Friend 2" />
               <img src="https://i.pravatar.cc/100?img=47" alt="Friend 3" />
             </div>
-            <button class="btn btn-outline" style="padding: 4px 8px; font-size: 0.75rem;">
+            <button class="btn btn-outline" onclick="handleShareTrip()" style="padding: 4px 8px; font-size: 0.75rem;">
               <i class="fa-solid fa-share-nodes"></i> Share
             </button>
           </div>
@@ -587,100 +672,56 @@
       <section class="card itinerary-column">
         <div class="section-header">
           <div>
-            <div class="section-title">MY EUROPE TRIP</div>
-            <div style="font-size: 0.75rem; color: var(--text-muted);">June 15 – 28, 2026</div>
+            <div id="trip-title-display" class="section-title">MY TRIP</div>
+            <div id="trip-dates-display" style="font-size: 0.75rem; color: var(--text-muted);">June 15 – 18, 2026</div>
           </div>
           <div class="btn-group">
-            <button class="btn btn-outline"><i class="fa-solid fa-floppy-disk"></i> Save</button>
-            <button class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add Stop</button>
+            <button class="btn btn-outline" id="btn-save-trip" onclick="handleSaveTrip()"><i class="fa-solid fa-floppy-disk"></i> Save</button>
+            <a href="addtrip.html" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add Stop</a>
           </div>
         </div>
 
-        <!-- Stop 1: Paris -->
-        <div class="stop-card">
-          <div class="stop-header blue">
-            <span><i class="fa-solid fa-location-dot"></i> Paris, France</span>
-            <span>4 days</span>
-          </div>
-          <div class="stop-content">
-            <div>
-              <div class="detail-item"><i class="fa-solid fa-plane-departure"></i> Flight: 1:50 PM</div>
-              <div class="detail-item"><i class="fa-solid fa-hotel"></i> Grand Hotel Paris</div>
-            </div>
-            <div class="activity-preview">
-              <img src="https://images.unsplash.com/photo-1511739001486-6bfe10ce785f?auto=format&fit=crop&w=150&q=80" alt="Eiffel Tower" />
-              <div>
-                <strong style="font-size: 0.8rem; display: block;">Eiffel Tower</strong>
-                <span style="font-size: 0.75rem; color: var(--text-muted);">Guided tour</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Stop 2: Rome -->
-        <div class="stop-card">
-          <div class="stop-header green">
-            <span><i class="fa-solid fa-location-dot"></i> Rome, Italy</span>
-            <span>4 days</span>
-          </div>
-          <div class="stop-content">
-            <div>
-              <div class="detail-item"><i class="fa-solid fa-train"></i> Express Train: 10:15 AM</div>
-              <div class="detail-item"><i class="fa-solid fa-hotel"></i> Colosseum Suites</div>
-            </div>
-            <div class="activity-preview">
-              <img src="https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&w=150&q=80" alt="Colosseum" />
-              <div>
-                <strong style="font-size: 0.8rem; display: block;">Colosseum</strong>
-                <span style="font-size: 0.75rem; color: var(--text-muted);">Historical pass</span>
-              </div>
-            </div>
-          </div>
+        <!-- Dynamic Container for Stops -->
+        <div id="stops-container">
+          <!-- Stops dynamically injected via JS -->
         </div>
 
         <!-- Action Footer -->
         <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: auto; padding-top: 8px; flex-wrap: wrap;">
-          <button class="btn btn-green"><i class="fa-solid fa-share-nodes"></i> Share</button>
-          <button class="btn btn-outline"><i class="fa-solid fa-plus"></i> Add Stop</button>
-          <button class="btn btn-primary">View Details</button>
+          <button class="btn btn-green" onclick="handleShareTrip()"><i class="fa-solid fa-share-nodes"></i> Share</button>
+          <a href="addtrip.html" class="btn btn-outline"><i class="fa-solid fa-plus"></i> Add Stop</a>
+          <button class="btn btn-primary" onclick="showToast('Viewing full itinerary item schedule & notes.', 'info')">View Details</button>
         </div>
       </section>
 
       <!-- 4. Budget & Recommendations Column -->
       <aside class="side-panel">
         <div class="card">
-          <span style="font-size: 0.85rem; font-weight: 600;">Budget & Logistics</span>
-          <div class="budget-value">$3,450</div>
+          <span style="font-size: 0.85rem; font-weight: 600;">Budget &amp; Logistics</span>
+          <div id="budget-total-display" class="budget-value">₹16,000</div>
           
           <div class="budget-item">
-            <span style="color: var(--text-muted);"><i class="fa-solid fa-circle" style="color: #38bdf8; font-size: 0.45rem;"></i> Flights</span>
-            <strong>$900</strong>
+            <span style="color: var(--text-muted);"><i class="fa-solid fa-circle" style="color: #38bdf8; font-size: 0.45rem;"></i> Flights / Cabs</span>
+            <strong id="budget-flights">₹2,400</strong>
           </div>
           <div class="budget-item">
-            <span style="color: var(--text-muted);"><i class="fa-solid fa-circle" style="color: #34d399; font-size: 0.45rem;"></i> Hotels</span>
-            <strong>$1,500</strong>
+            <span style="color: var(--text-muted);"><i class="fa-solid fa-circle" style="color: #34d399; font-size: 0.45rem;"></i> Hotels / Stays</span>
+            <strong id="budget-hotels">₹7,200</strong>
           </div>
           <div class="budget-item">
-            <span style="color: var(--text-muted);"><i class="fa-solid fa-circle" style="color: #818cf8; font-size: 0.45rem;"></i> Activities</span>
-            <strong>$600</strong>
+            <span style="color: var(--text-muted);"><i class="fa-solid fa-circle" style="color: #818cf8; font-size: 0.45rem;"></i> Activities &amp; Sights</span>
+            <strong id="budget-activities">₹3,800</strong>
           </div>
           <div class="budget-item">
-            <span style="color: var(--text-muted);"><i class="fa-solid fa-circle" style="color: #fb923c; font-size: 0.45rem;"></i> Food</span>
-            <strong>$450</strong>
+            <span style="color: var(--text-muted);"><i class="fa-solid fa-circle" style="color: #fb923c; font-size: 0.45rem;"></i> Food &amp; Dining</span>
+            <strong id="budget-food">₹2,600</strong>
           </div>
         </div>
 
         <div class="card">
-          <span style="font-size: 0.85rem; font-weight: 600;">Add Stops & Activities</span>
-          <div class="activity-suggestion-grid">
-            <div class="suggestion-card">
-              <img src="https://images.unsplash.com/photo-1565099824688-e93eb20fe527?auto=format&fit=crop&w=300&q=80" alt="Louvre" />
-              <span>Louvre</span>
-            </div>
-            <div class="suggestion-card">
-              <img src="https://images.unsplash.com/photo-1531572753322-ad063cecc140?auto=format&fit=crop&w=300&q=80" alt="Vatican" />
-              <span>Vatican</span>
-            </div>
+          <span style="font-size: 0.85rem; font-weight: 600;">Add Stops &amp; Activities</span>
+          <div id="suggestions-container" class="activity-suggestion-grid">
+            <!-- Dynamic suggestion thumbnails -->
           </div>
         </div>
       </aside>
@@ -688,5 +729,225 @@
     </div>
   </main>
 
+  <script src="api.js"></script>
+  <script>
+    let activeTrip = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. Load active user
+      const user = GlobeTrotterAPI.getActiveUser();
+      const avatarEl = document.getElementById('nav-user-avatar');
+      if (avatarEl && user) {
+        avatarEl.textContent = user.avatar_letter || (user.first_name || user.username || 'T').charAt(0).toUpperCase();
+      }
+
+      // 2. Load active trip
+      loadDashboardData();
+    });
+
+    function loadDashboardData() {
+      activeTrip = GlobeTrotterAPI.getCurrentTrip();
+      if (!activeTrip) return;
+
+      // Update Header & Route Badges
+      const titleEl = document.getElementById('trip-title-display');
+      const datesEl = document.getElementById('trip-dates-display');
+      const routeTagEl = document.getElementById('route-tag-badge');
+      const headingEl = document.getElementById('hero-heading');
+
+      if (titleEl) titleEl.textContent = activeTrip.name.toUpperCase();
+      if (datesEl) datesEl.textContent = `${activeTrip.start_date} – ${activeTrip.end_date} (${activeTrip.duration_days} Days)`;
+      if (routeTagEl) routeTagEl.textContent = activeTrip.destination || activeTrip.cities.join(' – ');
+      if (headingEl) headingEl.textContent = `Journey: ${activeTrip.name}`;
+
+      // Update Budget Column
+      const budgetTotalEl = document.getElementById('budget-total-display');
+      const totalBudget = activeTrip.estimated_budget || activeTrip.budget || 16000;
+      if (budgetTotalEl) budgetTotalEl.textContent = `₹${Number(totalBudget).toLocaleString()}`;
+
+      document.getElementById('budget-flights').textContent = `₹${Math.round(totalBudget * 0.15).toLocaleString()}`;
+      document.getElementById('budget-hotels').textContent = `₹${Math.round(totalBudget * 0.45).toLocaleString()}`;
+      document.getElementById('budget-activities').textContent = `₹${Math.round(totalBudget * 0.25).toLocaleString()}`;
+      document.getElementById('budget-food').textContent = `₹${Math.round(totalBudget * 0.15).toLocaleString()}`;
+
+      // Render Stop Cards
+      renderStopCards(activeTrip);
+
+      // Render Dynamic Activity Suggestions
+      loadDynamicSuggestions(activeTrip.destination || 'Dwarka');
+    }
+
+    function renderStopCards(trip) {
+      const container = document.getElementById('stops-container');
+      if (!container) return;
+
+      const headerColors = ['blue', 'green', 'amber'];
+      const defaultImages = [
+        'https://images.unsplash.com/photo-1609766857041-ed402ea8069a?auto=format&fit=crop&w=150&q=80',
+        'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&w=150&q=80',
+        'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=150&q=80',
+        'https://images.unsplash.com/photo-1511739001486-6bfe10ce785f?auto=format&fit=crop&w=150&q=80'
+      ];
+
+      const days = trip.itineraries || [];
+      if (!days.length) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 24px; color: var(--text-muted);">
+            <i class="fa-solid fa-route" style="font-size: 2rem; color: #cbd5e1; margin-bottom: 8px;"></i>
+            <p>No stops configured yet.</p>
+            <a href="addtrip.html" class="btn btn-primary btn-sm" style="margin-top: 8px;">+ Add First Destination</a>
+          </div>
+        `;
+        return;
+      }
+
+      let html = '';
+      days.forEach((day, index) => {
+        const colorClass = headerColors[index % headerColors.length];
+        const cityName = day.city_name || (trip.cities && trip.cities[index % trip.cities.length]) || 'Stop ' + (index + 1);
+        const transport = day.flight_or_train || `Express Travel: 0${8 + index}:30 AM`;
+        const hotel = day.hotel_name || `${cityName} Heritage Suites`;
+
+        const primaryItem = (day.items && day.items.length) ? day.items[0] : {
+          name: `${cityName} Sightseeing & Darshan`,
+          description: `Full day exploration in ${cityName}`,
+          image_url: defaultImages[index % defaultImages.length]
+        };
+
+        const itemImg = primaryItem.image_url || defaultImages[index % defaultImages.length];
+
+        html += `
+          <div class="stop-card">
+            <div class="stop-header ${colorClass}">
+              <span><i class="fa-solid fa-location-dot"></i> Day ${day.day_number || (index + 1)}: ${cityName}</span>
+              <span>₹${(day.allocated_budget || 4000).toLocaleString()}</span>
+            </div>
+            <div class="stop-content">
+              <div>
+                <div class="detail-item"><i class="fa-solid fa-plane-departure"></i> ${transport}</div>
+                <div class="detail-item"><i class="fa-solid fa-hotel"></i> ${hotel}</div>
+              </div>
+              <div class="activity-preview">
+                <img src="${itemImg}" alt="${primaryItem.name}" />
+                <div>
+                  <strong style="font-size: 0.8rem; display: block;">${primaryItem.name}</strong>
+                  <span style="font-size: 0.75rem; color: var(--text-muted);">${primaryItem.description || 'Guided tour & sights'}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    async function loadDynamicSuggestions(destination) {
+      const container = document.getElementById('suggestions-container');
+      if (!container) return;
+
+      const acts = await GlobeTrotterAPI.fetchActivitiesForCity(destination);
+      const topActs = acts.slice(0, 4);
+
+      let html = '';
+      topActs.forEach(act => {
+        const img = act.image_url || 'https://images.unsplash.com/photo-1565099824688-e93eb20fe527?auto=format&fit=crop&w=300&q=80';
+        html += `
+          <div class="suggestion-card" onclick="handleAddActivitySuggestion('${act.name.replace(/'/g, "\\'")}', ${act.estimated_cost || 200})">
+            <img src="${img}" alt="${act.name}" />
+            <span>${act.name}</span>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    function handleAddActivitySuggestion(name, cost) {
+      if (!activeTrip || !activeTrip.itineraries || !activeTrip.itineraries.length) {
+        showToast('Please create a trip first.', 'warning');
+        return;
+      }
+      activeTrip.itineraries[0].items.push({
+        name: name,
+        category: 'sightseeing',
+        time: '04:00 PM',
+        estimated_cost: cost,
+        description: 'Added from suggestions.'
+      });
+      activeTrip.total_cost = (activeTrip.total_cost || 0) + cost;
+      GlobeTrotterAPI.saveCurrentTrip(activeTrip);
+      renderStopCards(activeTrip);
+      showToast(`Added "${name}" (₹${cost}) to Day 1!`, 'success');
+    }
+
+    function handleSaveTrip() {
+      const btn = document.getElementById('btn-save-trip');
+      setButtonLoading(btn, true, 'Saving...');
+      setTimeout(() => {
+        if (activeTrip) {
+          GlobeTrotterAPI.saveCurrentTrip(activeTrip);
+        }
+        setButtonLoading(btn, false);
+        btn.innerHTML = '<i class="fa-solid fa-check"></i> Saved';
+        showToast('Trip itinerary saved successfully!', 'success');
+        setTimeout(() => {
+          btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save';
+        }, 2000);
+      }, 500);
+    }
+
+    function handleShareTrip() {
+      if (activeTrip) {
+        GlobeTrotterAPI.exportTripAsJson(activeTrip);
+        showToast(`Trip "${activeTrip.name}" JSON export downloaded!`, 'success');
+      }
+    }
+
+    // Live search input handling
+    let searchDebounce = null;
+    function handleSearchInput(query) {
+      clearTimeout(searchDebounce);
+      const dropdown = document.getElementById('search-results-dropdown');
+      if (!query || query.trim().length < 2) {
+        dropdown.style.display = 'none';
+        return;
+      }
+
+      searchDebounce = setTimeout(async () => {
+        const results = await GlobeTrotterAPI.searchCities(query.trim());
+        if (results && results.length) {
+          dropdown.innerHTML = results.map(r => `
+            <div class="search-item" onclick="selectSearchResult('${r.name || r.full}')">
+              <i class="fa-solid fa-location-dot" style="color: var(--primary-blue);"></i>
+              <div>
+                <strong>${r.name || r.full}</strong>
+                <span style="font-size: 0.75rem; color: var(--text-muted); display: block;">${r.country || ''}</span>
+              </div>
+            </div>
+          `).join('');
+          dropdown.style.display = 'flex';
+        } else {
+          dropdown.style.display = 'none';
+        }
+      }, 250);
+    }
+
+    function selectSearchResult(cityName) {
+      document.getElementById('search-results-dropdown').style.display = 'none';
+      document.getElementById('search-input').value = cityName;
+      showToast(`Selected destination: ${cityName}. Loading live activities...`, 'info');
+      loadDynamicSuggestions(cityName);
+    }
+
+    // Close search dropdown on click outside
+    document.addEventListener('click', (e) => {
+      const bar = document.querySelector('.search-bar');
+      const dropdown = document.getElementById('search-results-dropdown');
+      if (bar && !bar.contains(e.target) && dropdown) {
+        dropdown.style.display = 'none';
+      }
+    });
+  </script>
 </body>
 </html>
