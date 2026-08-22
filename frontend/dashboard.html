@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GlobeTrotter - Travel Dashboard</title>
+  
+  <!-- Google Fonts & Font Awesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --bg-color: #f0f7fc;
+      --card-bg: #ffffff;
+      --primary-blue: #0284c7;
+      --primary-hover: #0369a1;
+      --accent-green: #10b981;
+      --accent-green-hover: #059669;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* 1. Header / Navbar */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      background: var(--card-bg);
+      padding: 12px 24px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #0f172a;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .brand-logo i {
+      color: var(--primary-blue);
+      font-size: 1.4rem;
+    }
+
+    .search-bar {
+      display: flex;
+      align-items: center;
+      background: #f1f5f9;
+      border-radius: 30px;
+      padding: 8px 16px;
+      width: 100%;
+      max-width: 400px;
+      gap: 10px;
+    }
+
+    .search-bar input {
+      border: none;
+      background: transparent;
+      outline: none;
+      width: 100%;
+      font-size: 0.88rem;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      list-style: none;
+      gap: 24px;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-muted);
+      font-weight: 500;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+      white-space: nowrap;
+    }
+
+    .nav-links a.active, .nav-links a:hover {
+      color: var(--primary-blue);
+      font-weight: 600;
+    }
+
+    .account {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .profile-circle {
+      height: 28px;
+      width: 28px;
+      border-radius: 50%;
+      background: #cbd5e1;
+      flex-shrink: 0;
+    }
+
+    /* Main Viewport Container */
+    .app-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      padding: 20px 24px;
+      max-width: 1600px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    /* 2. Hero Banner */
+    .hero-banner {
+      position: relative;
+      height: 130px;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #0ea5e9, #059669);
+      padding: 16px;
+      text-align: center;
+    }
+
+    .hero-banner img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.4;
+    }
+
+    .hero-banner h1 {
+      position: relative;
+      color: white;
+      font-size: clamp(1.2rem, 3vw, 1.8rem);
+      font-weight: 700;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    }
+
+    /* 3. Responsive Dashboard Grid */
+    .dashboard-layout {
+      display: grid;
+      grid-template-columns: 80px 300px minmax(360px, 1fr) 280px;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      padding: 16px;
+    }
+
+    /* Column 1: Vertical Sidebar */
+    .sidebar-menu {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 6px;
+    }
+
+    .menu-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      color: var(--text-muted);
+      font-size: 0.72rem;
+      text-decoration: none;
+      width: 100%;
+      padding: 10px 0;
+      border-radius: var(--radius-sm);
+      transition: all 0.2s;
+    }
+
+    .menu-item i {
+      font-size: 1.15rem;
+    }
+
+    .menu-item.active {
+      background: #e0f2fe;
+      color: var(--primary-blue);
+      font-weight: 600;
+    }
+
+    /* Column 2: Maps & Friends */
+    .map-column {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .map-preview {
+      height: 240px;
+      background: #e2e8f0;
+      border-radius: var(--radius-md);
+      position: relative;
+      overflow: hidden;
+      padding: 0;
+    }
+
+    .map-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .tag-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .friends-list {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 12px;
+    }
+
+    .avatar-group {
+      display: flex;
+    }
+
+    .avatar-group img {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 2px solid #ffffff;
+      margin-right: -6px;
+    }
+
+    /* Column 3: Itinerary Timeline */
+    .itinerary-column {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .section-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: none;
+      padding: 7px 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      transition: background 0.2s ease;
+    }
+
+    .btn-outline {
+      background: #f8fafc;
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+    }
+
+    .btn-outline:hover {
+      background: #edf2f7;
+    }
+
+    .btn-primary {
+      background: var(--primary-blue);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-green {
+      background: var(--accent-green);
+      color: #fff;
+    }
+
+    .btn-green:hover {
+      background: var(--accent-green-hover);
+    }
+
+    .stop-card {
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+    }
+
+    .stop-header {
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+
+    .stop-header.blue { background: #f0f9ff; color: var(--primary-blue); }
+    .stop-header.green { background: #f0fdf4; color: var(--accent-green); }
+
+    .stop-content {
+      padding: 12px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      background: #fff;
+    }
+
+    .detail-item {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+
+    .activity-preview {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .activity-preview img {
+      width: 44px;
+      height: 44px;
+      border-radius: 6px;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+
+    /* Column 4: Side Panel */
+    .side-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .budget-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin: 6px 0 10px;
+    }
+
+    .budget-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.82rem;
+      margin-bottom: 6px;
+    }
+
+    .activity-suggestion-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .suggestion-card {
+      position: relative;
+      border-radius: 6px;
+      overflow: hidden;
+      height: 75px;
+    }
+
+    .suggestion-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .suggestion-card span {
+      position: absolute;
+      bottom: 4px;
+      left: 6px;
+      color: #fff;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+    }
+
+    /* 4. Media Queries */
+    @media (max-width: 1200px) {
+      .dashboard-layout {
+        grid-template-columns: 70px 1fr 280px;
+      }
+      .map-column {
+        grid-column: span 3;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .dashboard-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar-menu {
+        flex-direction: row;
+        justify-content: space-around;
+        padding: 8px;
+      }
+
+      .menu-item {
+        padding: 6px;
+      }
+
+      .map-column {
+        grid-column: span 1;
+        grid-template-columns: 1fr;
+      }
+
+      .navbar {
+        flex-wrap: wrap;
+      }
+
+      .search-bar {
+        order: 3;
+        max-width: 100%;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .stop-content {
+        grid-template-columns: 1fr;
+      }
+
+      .nav-links {
+        gap: 12px;
+      }
+
+      .app-main {
+        padding: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Full-Width Navbar -->
+  <header class="navbar">
+    <a href="#" class="brand-logo">
+      <i class="fa-solid fa-earth-americas"></i> GLOBETROTTER
+    </a>
+    
+    <div class="search-bar">
+      <i class="fa-solid fa-magnifying-glass" style="color: var(--text-muted);"></i>
+      <input type="text" placeholder="Search destinations, activities..." />
+    </div>
+
+    <ul class="nav-links">
+      <li><a href="#">Community</a></li>
+      <li><a href="#" class="active">My Trips</a></li>
+      <li>
+        <div class="account">
+          <div class="profile-circle"></div>
+          <a href="#">User <i class="fa-solid fa-chevron-down" style="font-size: 0.7rem;"></i></a>
+        </div>
+      </li>
+    </ul>
+  </header>
+
+  <!-- Main Responsive Container -->
+  <main class="app-main">
+    
+    <!-- Hero Banner -->
+    <div class="hero-banner">
+      <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1600&q=80" alt="Scenic Background" />
+      <h1>Explore & Plan Your Next Adventure</h1>
+    </div>
+
+    <!-- Dashboard Content Layout -->
+    <div class="dashboard-layout">
+      
+      <!-- 1. Navigation Column -->
+      <aside class="card sidebar-menu">
+        <a href="#" class="menu-item active">
+          <i class="fa-solid fa-table-columns"></i>
+          <span>Trips</span>
+        </a>
+        <a href="#" class="menu-item">
+          <i class="fa-solid fa-compass"></i>
+          <span>Explore</span>
+        </a>
+        <a href="#" class="menu-item">
+          <i class="fa-solid fa-user-group"></i>
+          <span>Friends</span>
+        </a>
+        <a href="#" class="menu-item">
+          <i class="fa-solid fa-map-location-dot"></i>
+          <span>Map</span>
+        </a>
+        <a href="#" class="menu-item">
+          <i class="fa-solid fa-note-sticky"></i>
+          <span>Notes</span>
+        </a>
+      </aside>
+
+      <!-- 2. Map & Connections Column -->
+      <section class="map-column">
+        <div class="card map-preview">
+          <span class="tag-badge">Paris – Rome – Athens</span>
+          <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=600&q=80" alt="Route Map" />
+        </div>
+
+        <div class="card">
+          <div class="section-header" style="margin-bottom: 6px;">
+            <span style="font-size: 0.85rem; font-weight: 600;">Trip Friends</span>
+            <a href="#" style="font-size: 0.75rem; color: var(--primary-blue); text-decoration: none;">Share all</a>
+          </div>
+          <div class="friends-list">
+            <div class="avatar-group">
+              <img src="https://i.pravatar.cc/100?img=33" alt="Friend 1" />
+              <img src="https://i.pravatar.cc/100?img=12" alt="Friend 2" />
+              <img src="https://i.pravatar.cc/100?img=47" alt="Friend 3" />
+            </div>
+            <button class="btn btn-outline" style="padding: 4px 8px; font-size: 0.75rem;">
+              <i class="fa-solid fa-share-nodes"></i> Share
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. Itinerary Center Column -->
+      <section class="card itinerary-column">
+        <div class="section-header">
+          <div>
+            <div class="section-title">MY EUROPE TRIP</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">June 15 – 28, 2026</div>
+          </div>
+          <div class="btn-group">
+            <button class="btn btn-outline"><i class="fa-solid fa-floppy-disk"></i> Save</button>
+            <button class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add Stop</button>
+          </div>
+        </div>
+
+        <!-- Stop 1: Paris -->
+        <div class="stop-card">
+          <div class="stop-header blue">
+            <span><i class="fa-solid fa-location-dot"></i> Paris, France</span>
+            <span>4 days</span>
+          </div>
+          <div class="stop-content">
+            <div>
+              <div class="detail-item"><i class="fa-solid fa-plane-departure"></i> Flight: 1:50 PM</div>
+              <div class="detail-item"><i class="fa-solid fa-hotel"></i> Grand Hotel Paris</div>
+            </div>
+            <div class="activity-preview">
+              <img src="https://images.unsplash.com/photo-1511739001486-6bfe10ce785f?auto=format&fit=crop&w=150&q=80" alt="Eiffel Tower" />
+              <div>
+                <strong style="font-size: 0.8rem; display: block;">Eiffel Tower</strong>
+                <span style="font-size: 0.75rem; color: var(--text-muted);">Guided tour</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stop 2: Rome -->
+        <div class="stop-card">
+          <div class="stop-header green">
+            <span><i class="fa-solid fa-location-dot"></i> Rome, Italy</span>
+            <span>4 days</span>
+          </div>
+          <div class="stop-content">
+            <div>
+              <div class="detail-item"><i class="fa-solid fa-train"></i> Express Train: 10:15 AM</div>
+              <div class="detail-item"><i class="fa-solid fa-hotel"></i> Colosseum Suites</div>
+            </div>
+            <div class="activity-preview">
+              <img src="https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&w=150&q=80" alt="Colosseum" />
+              <div>
+                <strong style="font-size: 0.8rem; display: block;">Colosseum</strong>
+                <span style="font-size: 0.75rem; color: var(--text-muted);">Historical pass</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Footer -->
+        <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: auto; padding-top: 8px; flex-wrap: wrap;">
+          <button class="btn btn-green"><i class="fa-solid fa-share-nodes"></i> Share</button>
+          <button class="btn btn-outline"><i class="fa-solid fa-plus"></i> Add Stop</button>
+          <button class="btn btn-primary">View Details</button>
+        </div>
+      </section>
+
+      <!-- 4. Budget & Recommendations Column -->
+      <aside class="side-panel">
+        <div class="card">
+          <span style="font-size: 0.85rem; font-weight: 600;">Budget & Logistics</span>
+          <div class="budget-value">$3,450</div>
+          
+          <div class="budget-item">
+            <span style="color: var(--text-muted);"><i class="fa-solid fa-circle" style="color: #38bdf8; font-size: 0.45rem;"></i> Flights</span>
+            <strong>$900</strong>
+          </div>
+          <div class="budget-item">
+            <span style="color: var(--text-muted);"><i class="fa-solid fa-circle" style="color: #34d399; font-size: 0.45rem;"></i> Hotels</span>
+            <strong>$1,500</strong>
+          </div>
+          <div class="budget-item">
+            <span style="color: var(--text-muted);"><i class="fa-solid fa-circle" style="color: #818cf8; font-size: 0.45rem;"></i> Activities</span>
+            <strong>$600</strong>
+          </div>
+          <div class="budget-item">
+            <span style="color: var(--text-muted);"><i class="fa-solid fa-circle" style="color: #fb923c; font-size: 0.45rem;"></i> Food</span>
+            <strong>$450</strong>
+          </div>
+        </div>
+
+        <div class="card">
+          <span style="font-size: 0.85rem; font-weight: 600;">Add Stops & Activities</span>
+          <div class="activity-suggestion-grid">
+            <div class="suggestion-card">
+              <img src="https://images.unsplash.com/photo-1565099824688-e93eb20fe527?auto=format&fit=crop&w=300&q=80" alt="Louvre" />
+              <span>Louvre</span>
+            </div>
+            <div class="suggestion-card">
+              <img src="https://images.unsplash.com/photo-1531572753322-ad063cecc140?auto=format&fit=crop&w=300&q=80" alt="Vatican" />
+              <span>Vatican</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+    </div>
+  </main>
+
+</body>
+</html>
