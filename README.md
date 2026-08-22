@@ -1,0 +1,2 @@
+# GlobeTrotter
+Project for hackathon
