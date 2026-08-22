@@ -1,48 +1,210 @@
+:root {
+  --bg-color: #dbeafe;
+  --card-bg: #ffffff;
+  --primary-blue: #0284c7;
+  --primary-hover: #0369a1;
+  --accent-green: #10b981;
+  --text-main: #1e293b;
+  --text-muted: #64748b;
+  --border-color: #e2e8f0;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
 body {
-    font-family: Arial;
-    background: #f4f4f4;
+  background-color: var(--bg-color);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  color: var(--text-main);
 }
 
-.container {
-    width: 400px;
-    margin: auto;
-    padding: 20px;
-    background: white;
+.auth-wrapper {
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
-input {
-    width: 100%;
-    padding: 10px;
-    margin: 5px 0 15px;
+.auth-wrapper.login-mode {
+  max-width: 440px;
 }
 
-button {
-    width: 100%;
-    padding: 10px;
-    background: black;
-    color: white;
+.auth-wrapper.register-mode {
+  max-width: 680px;
 }
 
-.error {
-    color: red;
+.auth-header {
+  text-align: center;
+  padding: 32px 32px 16px;
 }
 
-.alert {
-    background: lightgreen;
-    padding: 10px;
+.brand-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #0f172a;
+  text-decoration: none;
+  margin-bottom: 12px;
 }
 
-.dashboard {
-    text-align: center;
+.brand-logo i {
+  color: var(--primary-blue);
+  font-size: 1.5rem;
 }
 
-.actions {
-    margin-top: 20px;
+.auth-header h2 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-main);
 }
 
-.logout-btn {
-    background: red;
-    color: white;
-    padding: 10px 20px;
-    text-decoration: none;
+.auth-header p {
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  margin-top: 4px;
+}
+
+.auth-body {
+  padding: 16px 32px 32px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.form-grid.single-col {
+  grid-template-columns: 1fr;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group.full-width {
+  grid-column: span 2;
+}
+
+.form-group label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.input-with-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-with-icon i {
+  position: absolute;
+  left: 14px;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.input-with-icon input {
+  width: 100%;
+  padding: 10px 14px 10px 38px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: #f8fafc;
+  outline: none;
+  font-size: 0.88rem;
+  color: var(--text-main);
+  transition: all 0.2s ease;
+}
+
+.input-with-icon input:focus {
+  border-color: var(--primary-blue);
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+}
+
+.form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 14px 0 20px;
+  font-size: 0.8rem;
+}
+
+.form-options a {
+  color: var(--primary-blue);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.form-options a:hover {
+  text-decoration: underline;
+}
+
+.btn-submit {
+  width: 100%;
+  background: var(--primary-blue);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background 0.2s ease;
+}
+
+.btn-submit:hover {
+  background: var(--primary-hover);
+}
+
+.auth-footer {
+  text-align: center;
+  padding: 16px 32px 24px;
+  border-top: 1px solid var(--border-color);
+  background: #f8fafc;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.auth-footer a {
+  color: var(--primary-blue);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.auth-footer a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 640px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  .form-group.full-width {
+    grid-column: span 1;
+  }
 }
